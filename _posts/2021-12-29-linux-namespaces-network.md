@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Linux Namespaces: Network"
+title:  "Linux Namespaces. Network"
 date:   2022-12-29 20:55:06 +0200
 categories: linux
 ---
