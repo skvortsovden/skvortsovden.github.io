@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Linux. Find port number used by process with CAT and ECHO"
-date:   2022-07-19 22:24:23 +0200
+date:   2022-07-19 00:00:00 +0200
 categories: linux
 ---
 
