@@ -29,7 +29,7 @@ When you run a Jenkins pipeline with the Kubernetes plugin and a Pod template co
 
 Throughout this process, Jenkins manages the coordination and execution of the pipeline steps, while Kubernetes handles the Pod provisioning, scheduling, and container runtime operations. The Jenkins agent within the Pod serves as the execution environment for running the pipeline stages and interacting with the containers.
 
-```mermaid
+```mermaid!
 sequenceDiagram
     participant User
     participant Jenkins
