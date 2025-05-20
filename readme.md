@@ -1,4 +1,7 @@
-# skvortsovden.github.io
+# Personal Website
+![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-blue.svg)
+
+https://skvortsovden.github.io
 
 This repository contains the source code and content for my personal website, hosted via GitHub Pages.
 
