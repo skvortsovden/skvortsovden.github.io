@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap');
+
+/* Base styles */
+body {
+    background-color: #e4e2dd;
+    font-family: 'Manrope', sans-serif;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 2rem 1.5rem;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+}
+
+code {
+    color: #353535;
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 0.2em 0.4em;
+}
+
+/* Links */
+a {
+    color: #265d95;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Navigation */
+nav {
+    /* background-color: #265d95;
+    color: white; */
+    padding: 10px;
+}
+
+nav a {
+    /* color: white; */
+}
+
+nav ul {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: flex-start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    margin: 0;
+    padding: 0;
+}
+
+.site-footer {
+    background: #e4e2dd;
+    text-align: center;
+    padding: 1em 0;
+    margin-top: 2em;
+}
+
+.site-footer a {
+    color: #265d95;
+    font-size: 1.7em;
+    margin: 0 0.5em;
+    transition: color 0.2s;
+}
+
+.site-footer a:hover {
+    color: #1a3a5d;
+    text-decoration: none;
+}

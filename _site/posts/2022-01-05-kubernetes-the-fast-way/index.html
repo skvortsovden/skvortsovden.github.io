@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kubernetes Users</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>Kubernetes Users</h1>
+    <p>First thing first, there is <strong>no</strong> such object as a <strong>user in Kubernetes</strong>.<br>
+<strong>Certificates</strong> are used for authentification and authorization.</p>
+<p>So <strong>a user</strong> in Kubernetes is represented as <strong>a certificate owner</strong>.</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1641300538497/jKwrpsEIg.png" alt="Untitled-2022-01-04-1425.png"></p>
+<p>In order <strong>to give access for a user</strong> (certificate owner) to your cluster a user's <strong>certificate should be signed</strong> by the certificate authority that your cluster trust.</p>
+<blockquote></blockquote>
+<p>A few steps are required in order to get a normal user to be able to authenticate and invoke an API. First, this user must have a certificate issued by the Kubernetes cluster, and then present that certificate to the Kubernetes API.</p>
+<p>source: <a href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user">https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user</a></p>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      {% for page in collections.pages %}
+        <li>
+          <a href="{{ page.url }}">{{ page.data.title or page.fileSlug }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  <main>
+    <h1>{{ title }}</h1>
+    {{ content | safe }}
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>

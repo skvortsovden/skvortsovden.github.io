@@ -1,7 +1,6 @@
 ---
-layout: post
+
 title:  "Kubernetes Pod-to-Pod communication"
-date:   2022-10-28 08:00:00 +0200
 categories: kubernetes
 ---
 

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kubernetes The Fast Way</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>Kubernetes The Fast Way</h1>
+    <p>In this post, I'm going through <strong>Kubernetes</strong> commands trying to use the <strong>imperative approach</strong> as much as possible.<br>
+Below there is <strong>my personal cheat sheet</strong> for Kubernetes administration hands-on.</p>
+<p>Enjoy!</p>
+<h2>Table of content <!-- omit in toc --></h2>
+<ul>
+<li><a href="#before-you-start">Before you start</a>
+<ul>
+<li><a href="#install-bash-completion-on-ubuntu--debian">Install bash-completion on Ubuntu / Debian</a></li>
+<li><a href="#install-bash-completion-on-macos">Install bash-completion on macOS:</a></li>
+<li><a href="#kubectl-autocomplete">Kubectl autocomplete</a></li>
+</ul>
+</li>
+<li><a href="#generate-manifest-yaml-output">Generate manifest yaml output</a>
+<ul>
+<li><a href="#generate-single-pod-manifest">Generate single pod manifest</a></li>
+<li><a href="#generate-deployment-manifest">Generate deployment manifest</a></li>
+<li><a href="#caution">Caution!</a></li>
+</ul>
+</li>
+<li><a href="#frequently-used-commands">Frequently used commands</a>
+<ul>
+<li><a href="#run-a-single-pod">Run a single pod</a></li>
+<li><a href="#check-pod-status">Check pod status</a></li>
+<li><a href="#delete-pod">Delete pod</a></li>
+<li><a href="#create-deployment">Create deployment</a></li>
+<li><a href="#check-deployment-status">Check deployment status</a></li>
+<li><a href="#scale-deployment">Scale deployment</a></li>
+</ul>
+</li>
+</ul>
+<h2>Before you start</h2>
+<p>I've seen a lot of guys using <code>k</code> shortcut (alias) for <strong>kubectl</strong> command.</p>
+<p><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete">This</a> documentation page mentions <code>k</code> alias as well.</p>
+<h3>Install bash-completion on Ubuntu / Debian</h3>
+<pre><code class="language-bash">sudo apt install bash-completion
+</code></pre>
+<h3>Install bash-completion on macOS:</h3>
+<pre><code class="language-bash">brew install bash-completion
+</code></pre>
+<h3>Kubectl autocomplete</h3>
+<pre><code class="language-bash">echo &quot;source &lt;(kubectl completion bash)&quot; &gt;&gt; ~/.bashrc &amp;&amp;\
+echo &quot;alias k=kubectl&quot; &gt;&gt; ~/.bashrc &amp;&amp;\
+echo &quot;complete -F __start_kubectl k&quot; &gt;&gt; ~/.bashrc
+</code></pre>
+<h2>Generate manifest yaml output</h2>
+<p>Working with <strong>kubectl</strong> I found one more convenient alias which saved me a lot of time.</p>
+<pre><code class="language-bash">alias kg=&quot;kubectl -o yaml --dry-run=client&quot; # generate manifest yaml output, 'g' for generate
+</code></pre>
+<p>Then you can use it as follow:</p>
+<h3>Generate single pod manifest</h3>
+<pre><code class="language-bash">kg run webserver-pod --image nginx
+</code></pre>
+<p>output:</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: webserver-pod
+  name: webserver-pod
+spec:
+  containers:
+  - image: nginx
+    name: webserver-pod
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+</code></pre>
+<h3>Generate deployment manifest</h3>
+<pre><code class="language-bash">kg create deploy webserver --image nginx --replicas 3
+</code></pre>
+<p>output:</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: webserver
+  name: webserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webserver
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+</code></pre>
+<h3>Caution!</h3>
+<p>Although aliases might be super-efficient while working on your own machine it could be harmful when it comes to working in a managed environment where you are limited with default commands only.</p>
+<p>It's up to you to stick with default or leverage shortcuts.</p>
+<h2>Frequently used commands</h2>
+<h4>Run a single pod</h4>
+<p>with given name <em><strong>webserver</strong></em> and image <em><strong>nginx</strong></em>:</p>
+<pre><code class="language-bash">kubectl run webserver --image nginx # run a single pod
+</code></pre>
+<pre><code class="language-bash">kubectl run webserver --image nginx -l env=dev,tier=frontend # run a single pod with labels
+</code></pre>
+<pre><code class="language-bash">kubectl run webserver --image nginx --env &quot;env=prod&quot; --env &quot;tier=frontend&quot; # run a single pod with environment variables set
+</code></pre>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1640729377064/hcOm7qtMx.png" alt="pod"></p>
+<center>*Image 1. single pod in default namespace*</center>
+<h4>Check pod status</h4>
+<p>Check if pod is created and running:</p>
+<pre><code class="language-bash">kubectl get po # this command list all pods in the current namespace
+</code></pre>
+<p>or (if you have a bunch of pods) get pod status by its name (<em>webserver</em>):</p>
+<pre><code class="language-bash">kubectl get po webserver # get pod by name webserver
+</code></pre>
+<h4>Delete pod</h4>
+<pre><code class="language-bash">kubectl delete po webserver # delete pod by name webserver
+</code></pre>
+<h4>Create deployment</h4>
+<p>with given name <em><strong>websever-dep</strong></em> and image <em><strong>nginx</strong></em>:</p>
+<pre><code class="language-bash">kubectl create deploy webserver-dep --image nginx 
+</code></pre>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1640731788666/YayBeLx4L.png" alt="deployment.png"></p>
+<center>*Image 2. deployment with replicaset and single pod in default namespace*</center>
+<h4>Check deployment status</h4>
+<pre><code class="language-bash">kubectl get deploy # this command list all deployment in the current namespace
+</code></pre>
+<h4>Scale deployment</h4>
+<pre><code class="language-bash">kubectl scale deploy webserver-dep --replicas 3 # scale up to 3
+</code></pre>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1640734380415/LKB3FwM6F.png" alt="scale.png"></p>
+<center>*Image 3. deployment scaled up to 3*</center>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>

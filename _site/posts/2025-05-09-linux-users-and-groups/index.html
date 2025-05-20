@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>A single file to remember for Linux Users and Groups.</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>A single file to remember for Linux Users and Groups.</h1>
+    <p><strong>Long story short:</strong><br>
+I’m currently prepping for the Linux System Administrator certification, and honestly — keeping track of all the Linux files and commands is a bit overwhelming.</p>
+<p>So in this post, I want to focus on just <strong>one</strong> file that (in my opinion) stands out when it comes to understanding how Linux handles <strong>users and groups</strong>.</p>
+<hr>
+<h2>TL;DR</h2>
+<p>The file to remember is:</p>
+<pre><code class="language-text">/etc/nsswitch.conf
+</code></pre>
+<hr>
+<h2>Why this file?</h2>
+<p>Let’s peek at the manual page for this file:</p>
+<pre><code class="language-bash">man nsswitch.conf
+</code></pre>
+<p>You’ll see something like this:</p>
+<pre><code>nsswitch.conf(5)     File Formats Manual
+
+nsswitch.conf(5)
+
+NAME
+       nsswitch.conf - Name Service Switch configuration file
+
+DESCRIPTION
+       The  Name  Service  Switch  (NSS)  configuration file, /etc/nsswitch.conf ...
+</code></pre>
+<p>Now scroll down to the <strong>FILES</strong> section, and here’s what we get:</p>
+<pre><code>The following files are read when &quot;files&quot; source is specified for respective databases:
+
+       aliases     /etc/aliases
+       ethers      /etc/ethers
+       group       /etc/group
+       hosts       /etc/hosts
+       initgroups  /etc/group
+       netgroup    /etc/netgroup
+       networks    /etc/networks
+       passwd      /etc/passwd
+       protocols   /etc/protocols
+       publickey   /etc/publickey
+       rpc         /etc/rpc
+       services    /etc/services
+       shadow      /etc/shadow
+</code></pre>
+<p>This section lists all the files that <strong>Name Service Switch (NSS)</strong> checks when the source is set to <code>&quot;files&quot;</code>—including user and group information.</p>
+<hr>
+<h2>So... What <em>is</em> Name Service Switch?</h2>
+<p>Before NSS, every program had to be coded to look for data in one specific place, such as <code>/etc/passwd</code>.</p>
+<p>But modern Linux systems might store user and group info in different sources:</p>
+<ul>
+<li>Local files like <code>/etc/passwd</code> or <code>/etc/hosts</code></li>
+<li>LDAP directories</li>
+<li>NIS (an older network service)</li>
+<li>DNS servers</li>
+<li>Even custom databases</li>
+</ul>
+<p>Now imagine having to rewrite every tool to handle each of these sources separately. That would be a lot of work.</p>
+<p><strong>NSS</strong> solves that.</p>
+<p>It gives Linux a unified, flexible way to look up information, in the order you decide, all configured in one place:<br>
+<strong><code>/etc/nsswitch.conf</code></strong></p>
+<hr>
+<h2>What NSS solves</h2>
+<ul>
+<li>Centralized control over where to get system info</li>
+<li>Easy integration with network-based user systems</li>
+<li>Flexible setup: local, remote, or both — your call</li>
+</ul>
+<hr>
+<p>In short: if you're trying to understand how Linux decides where to look for things like users, groups, or hosts — start with <code>/etc/nsswitch.conf</code>. It’s the glue that ties it all together.</p>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>

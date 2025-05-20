@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kubernetes Pod-to-Pod communication</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>Kubernetes Pod-to-Pod communication</h1>
+    <p>In this post I am going to go over simple scenarios in order to show how communication between pods works in Kubernetes.</p>
+<p>Assuming we have kubernetes cluster, in my case it is minukube deployed locally, we can deploy application easily.</p>
+<pre><code>denys@leasure[~] :$ kubectl run demo-app --image nginx
+pod/demo-app created
+denys@leasure[~] :$ kubectl get po
+NAME        READY   STATUS    RESTARTS      AGE
+demo-app    1/1     Running   0             5s
+</code></pre>
+<p>Now we can check if our application is running. We can execute command <code>curl localhost</code> inside container and see response from nginx webserver.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app -- curl localhost
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>Cool, now we know <code>demo-app</code> is up and running on default port 80.
+Next, let's deploy one more application <code>demo-app-2</code>.</p>
+<pre><code>denys@leasure[~] :$ kubectl run demo-app-2 --image nginx
+pod/demo-app-2 created
+denys@leasure[~] :$ kubectl get po
+NAME         READY   STATUS    RESTARTS   AGE
+demo-app     1/1     Running   0          6m45s
+demo-app-2   1/1     Running   0          5s
+</code></pre>
+<p>Apparently quering <code>demo-app-2</code> from inside the container should give us the same result as for <code>demo-app</code>.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app-2 -- curl localhost
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/html&gt;
+</code></pre>
+<p>Now let's see how we can query <code>demo-app</code> from <code>demo-app-2</code> and other way around.</p>
+<p>First and the easiest way is using POD IP address. Let's get more detailed output by adding <code>-o wide</code></p>
+<pre><code>denys@leasure[~] :$ kubectl get po -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+demo-app     1/1     Running   0          18m   172.17.0.2   minikube   &lt;none&gt;           &lt;none&gt;
+demo-app-2   1/1     Running   0          11m   172.17.0.8   minikube   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p>Here we can see IP addresses assigned to each node.
+Each of these IP addresses is coming from the same pool no matter on which Node PODs are running.</p>
+<p>Using IP adress of <code>demo-app</code> we can query it from inside <code>demo-app-2</code>.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app-2 -- curl 172.17.0.2
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>Cool, that works fine. This is one of the easiest ways to check connection between two PODs.
+But we can't rely on IP adresses since they are transient, they change everytime POD is restarted. Moreover, when we scale number of PODs running the same application we would want to have traffic balancing accross all PODs instead of hitting one of them every time.</p>
+<p>Let's expose our POD to the cluster and make it available through Kubernetes Service.
+Service in Kubernetes is just an abstract layer on top of your POD which enables network traffic balancing and routing to your application.</p>
+<pre><code>denys@leasure[~] :$ kubectl expose pod demo-app --port 80
+service/demo-app exposed
+denys@leasure[~] :$ kubectl get services
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+demo-app     ClusterIP   10.101.54.82     &lt;none&gt;        80/TCP    18s
+</code></pre>
+<p>All we have to do is just to specify Pod name <code>demo-app</code> and port numbe <code>--port 80</code>.
+And now Kubernetes Service is created with the same name as Pod and it's own <code>CLUSTER-IP</code>. Let's use this IP to querey <code>demo-app</code> from inside <code>demo-app-2</code>.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app-2 -- curl 10.101.54.82
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/html&gt;
+</code></pre>
+<p>It works! Cool, now we do not stick to Pod's IP address and if it changes we still have access to application though Service.</p>
+<p>Although Kubernetes Service provides us with traffic balancing so that we don't care about Pod's IP anymore it has it's own IP which is transient as well.</p>
+<p>Now the problem is that if our Service is recreated it's IP address is going to be changed as well.</p>
+<p>The solution is DNS.</p>
+<p>Kubernetes creates DNS records for Services and Pods. You can contact Services with consistent DNS names instead of IP addresses.</p>
+<p>Let's call our <code>demo-app</code> though the Service using it's DNS name.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app-2 -- curl demo-app
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/html&gt;
+denys@leasure[~] :$
+</code></pre>
+<p>Here we use DNS <code>demo-app</code> which is the same as Service name. In case our Pods are in different namespaces we should add <code>.namespace-name</code> to Service name and get DNS like <code>demo-app.default</code>.</p>
+<pre><code>denys@leasure[~] :$ kubectl exec -it demo-app-2 -- curl demo-app.default
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+&lt;/html&gt;
+denys@leasure[~] :$
+</code></pre>
+<p>Cool, it works as well.
+So in the example above we call <code>demo-app</code> service in the <code>default</code> namespace using <code>curl</code> tool from inside <code>demo-app2</code> Pod.</p>
+<p>Now we can rely on DNS name of the Service and make sure nothing brakes after either Pods or Service has been recreated.</p>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>

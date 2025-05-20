@@ -1,7 +1,6 @@
 ---
-layout: post
+
 title:  "Kubernetes Users"
-date:   2022-01-05 20:55:06 +0200
 categories: kubernetes
 ---
 

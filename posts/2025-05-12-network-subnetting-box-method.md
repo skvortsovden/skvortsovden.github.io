@@ -1,7 +1,6 @@
 ---
-layout: post
+
 title:  "Network Subnetting. The box method."
-date:   2025-05-12 00:00:00 +0200
 categories: network
 
 ---

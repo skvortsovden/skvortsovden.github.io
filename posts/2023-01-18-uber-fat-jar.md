@@ -1,7 +1,6 @@
 ---
-layout: post
+
 title:  "Uber or Fat jar"
-date:   2023-01-18 00:00:00 +0200
 categories: java
 ---
 

@@ -1,11 +1,8 @@
 ---
-layout: post
+
 title:  "Kubernetes The Fast Way"
-date:   2022-01-13 20:55:06 +0200
 categories: kubernetes
 ---
-
-# Kubernetes The Fast Way <!-- omit in toc -->
 
 In this post, I'm going through **Kubernetes** commands trying to use the **imperative approach** as much as possible.  
 Below there is **my personal cheat sheet** for Kubernetes administration hands-on.
