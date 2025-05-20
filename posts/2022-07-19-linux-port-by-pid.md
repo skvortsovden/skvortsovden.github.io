@@ -1,61 +1,67 @@
 ---
-
-title:  "Linux. Find port number used by process with CAT and ECHO"
+title: "Linux: Find Port Number Used by Process with CAT and ECHO"
 categories: linux
 ---
 
-In this post, I show how to find **port number in-use by process** having its `PID` and using two native linux command - `CAT` end `ECHO` in `BASH`.
+In this post, I'll show how to find the **port number used by a process** when you know its `PID`, using two native Linux commands: `cat` and `echo` in `bash`.
 
+---
 
-## 0. Pick-up some randm PID from processes list on a linux system
+## 1. Pick a Random PID
+
+List the contents of `/proc` to see running process IDs:
+
 ```bash
 ls /proc
 ```
 
-output:
+Example output:
 
 ```
-1   33	  asound     cgroups	consoles  devices    driver	  ...
+1   33   asound   cgroups   consoles   devices   driver   ...
 ```
 
-## 1. Print processes TCP connection info
+---
+
+## 2. Print Process TCP Connection Info
+
+Display TCP connections for a specific process by replacing `$PID` with your process ID:
 
 ```bash
-cat /proc/$YOUR_PID_HERE/net/tcp
+cat /proc/$PID/net/tcp
 ```
 
-In my case the command is:
+For example, with PID 33:
 
 ```bash
 cat /proc/33/net/tcp
 ```
 
-output:
+Sample output:
+
 ```
 sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
 0: 00000000:0050 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 2078133 1 000000002283b263 100 0 0 10 0
 ```
 
-From the output we can pick-up **port number** for `local_address`, which in this case is **0050**.
+Look for the **local_address** column. The port number is the value after the colon (`:`), here it's `0050`.
 
-## 2. Convert PORT number
+---
 
-This value **0050** is **hexadecimal** number, so we need to convert it to **decimal**.
+## 3. Convert the Port Number from Hex to Decimal
 
-```bash
-echo $((16#$YOUR_PORT_HERE))
-```
-
-In my case the command is:
+The port number (`0050`) is in hexadecimal. Convert it to decimal with:
 
 ```bash
 echo $((16#0050))
 ```
 
-output:
+Output:
 
 ```
 80
 ```
 
-Enjoy your Linux!
+---
+
+Now you know how to find which port a process is using by its PID!

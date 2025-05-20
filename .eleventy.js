@@ -2,6 +2,7 @@ const { DateTime } = require("luxon");
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("styles");
+  eleventyConfig.addPassthroughCopy("img");
   eleventyConfig.addCollection("posts", function(collectionApi) {
     return collectionApi.getFilteredByGlob("posts/*.md");
   });

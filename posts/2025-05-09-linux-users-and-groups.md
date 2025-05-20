@@ -1,10 +1,10 @@
 ---
-title: "A single file to remember for Linux Users and Groups."
+title: "A Single File to Remember for Linux Users and Groups"
 categories: linux
 ---
 
 **Long story short:**  
-I’m currently prepping for the Linux System Administrator certification, and honestly — keeping track of all the Linux files and commands is a bit overwhelming.
+I'm currently prepping for the Linux System Administrator certification, and honestly—keeping track of all the Linux files and commands is a bit overwhelming.
 
 So in this post, I want to focus on just **one** file that (in my opinion) stands out when it comes to understanding how Linux handles **users and groups**.
 
@@ -20,15 +20,15 @@ The file to remember is:
 
 ---
 
-## Why this file?
+## Why This File?
 
-Let’s peek at the manual page for this file:
+Let's peek at the manual page for this file:
 
 ```bash
 man nsswitch.conf
 ```
 
-You’ll see something like this:
+You'll see something like this:
 
 ```
 nsswitch.conf(5)     File Formats Manual
@@ -42,7 +42,7 @@ DESCRIPTION
        The  Name  Service  Switch  (NSS)  configuration file, /etc/nsswitch.conf ...
 ```
 
-Now scroll down to the **FILES** section, and here’s what we get:
+Now scroll down to the **FILES** section, and here's what we get:
 
 ```
 The following files are read when "files" source is specified for respective databases:
@@ -66,7 +66,7 @@ This section lists all the files that **Name Service Switch (NSS)** checks when 
 
 ---
 
-## So... What *is* Name Service Switch?
+## So... What *Is* Name Service Switch?
 
 Before NSS, every program had to be coded to look for data in one specific place, such as `/etc/passwd`.
 
@@ -87,13 +87,13 @@ It gives Linux a unified, flexible way to look up information, in the order you 
 
 ---
 
-## What NSS solves
+## What NSS Solves
 
 - Centralized control over where to get system info
 - Easy integration with network-based user systems
-- Flexible setup: local, remote, or both — your call
+- Flexible setup: local, remote, or both—your call
 
 ---
 
-In short: if you're trying to understand how Linux decides where to look for things like users, groups, or hosts — start with `/etc/nsswitch.conf`. It’s the glue that ties it all together.
+In short: if you're trying to understand how Linux decides where to look for things like users, groups, or hosts—start with `/etc/nsswitch.conf`. It's the glue that ties it all together.
 

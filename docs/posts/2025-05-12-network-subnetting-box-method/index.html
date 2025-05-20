@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Network Subnetting. The box method.</title>
+  <title>Network Subnetting: The Box Method</title>
   <link rel="stylesheet" href="/styles/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -22,12 +22,12 @@
     </ul>
   </nav>
   <main>
-    <h1>Network Subnetting. The box method.</h1>
+    <h1>Network Subnetting: The Box Method</h1>
     <p>More than 10 years ago, I studied system administration and network security. Today, I’m revisiting my knowledge, which hasn't been in use for a while.</p>
-<p>One of the topics I’m revisiting is <strong>network subnetting</strong>. In today’s world, it’s hard to imagine anyone manually calculating networks on a piece of paper. However, I still believe it's a fundamental skill worth practicing from time to time.</p>
+<p>One of the topics I’m revisiting is <strong>network subnetting</strong>. In today’s world, it’s hard to imagine anyone manually calculating networks on paper, but I still believe it's a fundamental skill worth practicing from time to time.</p>
 <p>In this post, I’ll briefly explain the &quot;box method&quot; I was taught a decade ago to help visualize and understand subnetting.</p>
 <hr>
-<h2>Why subnetting matters</h2>
+<h2>Why Subnetting Matters</h2>
 <p>Before diving into the method, let’s quickly recap why subnetting is important. Subnetting allows network administrators to break a large network into smaller, manageable sub-networks, each with a specific range of IP addresses. This helps in:</p>
 <ul>
 <li><strong>Optimizing IP address usage</strong></li>
@@ -36,43 +36,45 @@
 </ul>
 <p>By subnetting a network, we can create multiple networks, manage traffic better, and improve performance.</p>
 <hr>
-<h2>The box (square) method</h2>
+<h2>The Box (Square) Method</h2>
 <p>The <strong>box method</strong> (also called the square method) is a <strong>visual approach</strong> to subnetting that helps break down and understand IP address spaces. It uses simple visual grids to represent how a large network can be subdivided into smaller subnets.</p>
-<h3>Step-by-step guide</h3>
-<h4>1. Draw a box</h4>
-<p>Let’s say we have a network <code>192.168.1.0</code>, which gives us 256 IP addresses in the range:
-192.168.1.<strong>0</strong> - 192.168.1.<strong>255</strong></p>
+<h3>Step-by-Step Guide</h3>
+<h4>1. Draw a Box</h4>
+<p>Suppose we have a network <code>192.168.1.0</code>, which gives us 256 IP addresses in the range:</p>
+<pre><code>192.168.1.0 - 192.168.1.255
+</code></pre>
 <p>Place <strong>0</strong> and <strong>255</strong> in the opposite corners of the box.</p>
-<p><img src="img/image.png" alt="alt text"></p>
-<h4>2. Divide the box in half horizontally</h4>
-<p>Now, divide the box in half. We need to add new numbers in the corners: <strong>127</strong> and <strong>128</strong>. This gives us two subnets with 128 IP addresses each:</p>
+<p><img src="/img/image-1.png" alt="Box step 1"></p>
+<h4>2. Divide the Box in Half Horizontally</h4>
+<p>Divide the box in half. Add new numbers in the corners: <strong>127</strong> and <strong>128</strong>. This gives us two subnets with 128 IP addresses each:</p>
 <ol>
-<li>192.168.1.<strong>0</strong> - 192.168.1.<strong>127</strong></li>
-<li>192.168.1.<strong>128</strong> - 192.168.1.<strong>255</strong></li>
+<li><code>192.168.1.0</code> – <code>192.168.1.127</code></li>
+<li><code>192.168.1.128</code> – <code>192.168.1.255</code></li>
 </ol>
-<p><img src="img/image-1.png" alt="alt text"></p>
-<h4>3. Divide the box in half vertically</h4>
-<p>Next, divide the box vertically.</p>
-<p>Divide each box number by 2 each time and add the first and last IP addresses to the corners.</p>
-<p><img src="img/image-2.png" alt="alt text"></p>
-<p>Now, we have 4 subnets, each with 64 IP addresses, in the following ranges:</p>
+<p><img src="/img/image-1.png" alt="Box step 2"></p>
+<h4>3. Divide the Box in Half Vertically</h4>
+<p>Next, divide the box vertically. For each box, divide the range by 2 and add the first and last IP addresses to the corners.</p>
+<p><img src="/img/image-2.png" alt="Box step 3"></p>
+<p>Now, we have 4 subnets, each with 64 IP addresses:</p>
 <ol>
-<li>192.168.1.<strong>0</strong> - 192.168.1.<strong>63</strong></li>
-<li>192.168.1.<strong>64</strong> - 192.168.1.<strong>127</strong></li>
-<li>192.168.1.<strong>128</strong> - 192.168.1.<strong>191</strong></li>
-<li>192.168.1.<strong>192</strong> - 192.168.1.<strong>255</strong></li>
+<li><code>192.168.1.0</code> – <code>192.168.1.63</code></li>
+<li><code>192.168.1.64</code> – <code>192.168.1.127</code></li>
+<li><code>192.168.1.128</code> – <code>192.168.1.191</code></li>
+<li><code>192.168.1.192</code> – <code>192.168.1.255</code></li>
 </ol>
-<h4>4. Continue dividing</h4>
+<h4>4. Continue Dividing</h4>
 <p>You can continue dividing the box as much as needed, ensuring that each box contains at least 2 addresses.</p>
-<h3>Why use the box method?</h3>
+<hr>
+<h3>Why Use the Box Method?</h3>
 <p>By dividing the network visually, you can easily determine the <strong>subnet range</strong>, <strong>broadcast address</strong>, and <strong>usable IPs</strong> for each subnet.</p>
 <hr>
-<h3>TL;DR: Watch the video</h3>
-<p>If you'd rather watch this in action, check out the video version of this post on YouTube: <a href="https://youtu.be/9mB0JBIgNt4?si=K2eH_NHu2nIL0m4J">Watch it on YouTube</a>.</p>
+<h2>TL;DR: Watch the Video</h2>
+<p>If you'd rather watch this in action, check out the video version of this post on YouTube:<br>
+<a href="https://youtu.be/9mB0JBIgNt4?si=K2eH_NHu2nIL0m4J">Watch it on YouTube</a></p>
 <hr>
-<h3>Final thoughts</h3>
+<h2>Final Thoughts</h2>
 <p>Although manual subnetting may seem outdated in a world of automated network tools, it’s still an important skill. It helps build a deep understanding of how networks work and improves your ability to troubleshoot and configure networks effectively.</p>
-<p>So, take a few minutes to practice subnetting using the box method. It might help you in ways beyond just getting IP addresses right.</p>
+<p>Take a few minutes to practice subnetting using the box method. It might help you in ways beyond just getting IP addresses right.</p>
 <hr>
 <p>That's it for now!</p>
 

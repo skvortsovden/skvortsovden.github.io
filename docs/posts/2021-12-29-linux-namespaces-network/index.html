@@ -23,92 +23,78 @@
   </nav>
   <main>
     <h1>Linux Namespaces. Network</h1>
-    <p>In this post, I go through a simple scenario using Linux network namespaces.
-Here I create <strong>two network namespaces</strong> and <strong>connect</strong> them using <strong>virtual ethernet (veth) pair.</strong></p>
-<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1640811821693/-3lyPlEf5.png" alt="image.png"></p>
-<center>*Image 1. Two network namespaces connected using veth pair*</center>
-<h3>Add network namespaces</h3>
-<p>command:</p>
+    <p>In this post, I go through a simple scenario using Linux network namespaces. Here, I create <strong>two network namespaces</strong> and <strong>connect</strong> them using a <strong>virtual ethernet (veth) pair</strong>.</p>
+<p><img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1640811821693/-3lyPlEf5.png" alt="Two network namespaces connected using veth pair"></p>
+<p align="center"><em>Image 1. Two network namespaces connected using veth pair</em></p>
+<hr>
+<h2>Add Network Namespaces</h2>
 <pre><code class="language-bash">ip netns add ns-01
-</code></pre>
-<pre><code class="language-bash">ip netns add ns-02
+ip netns add ns-02
 </code></pre>
 <hr>
-<h3>List network namespaces</h3>
-<p>command:</p>
+<h2>List Network Namespaces</h2>
 <pre><code class="language-bash">ip netns
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">ns-02
 ns-01
 </code></pre>
-<p>or</p>
-<p>command:</p>
+<p>Or:</p>
 <pre><code class="language-bash">ls /var/run/netns/
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">ns-01  ns-02
 </code></pre>
 <hr>
-<h3>Exec command in network namespace</h3>
-<p>command:</p>
+<h2>Execute Command in Network Namespace</h2>
 <pre><code class="language-bash">ip netns exec ns-01 ip link
 </code></pre>
-<p>or</p>
+<p>Or:</p>
 <pre><code class="language-bash">ip -n ns-01 link
 </code></pre>
-<p>where:</p>
 <ul>
-<li><strong>ip link</strong> - command to be executed inside network namespace <em>ns-01</em></li>
+<li><code>ip link</code> — command to be executed inside network namespace <code>ns-01</code></li>
 </ul>
 <hr>
-<h3>Connect two network namespaces</h3>
-<p>The <strong>veth</strong> devices are virtual Ethernet devices.</p>
-<p><strong>veth</strong> devices are always created in interconnected pairs.</p>
-<p>Place one end of a <strong>veth</strong> pair in one network namespace and the other end in another network namespace, thus allowing communication between network namespaces.</p>
-<p>command:</p>
+<h2>Connect Two Network Namespaces</h2>
+<p>The <strong>veth</strong> devices are virtual Ethernet devices, always created in interconnected pairs. Place one end of a <strong>veth</strong> pair in one network namespace and the other end in another, allowing communication between namespaces.</p>
 <pre><code class="language-bash">ip link add veth-for-ns-01 type veth peer name veth-for-ns-02
 </code></pre>
-<p>inspect:</p>
+<p>Inspect:</p>
 <pre><code class="language-bash">ip link | grep -A1 veth-for-ns-01
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">18: veth-for-ns-02@veth-for-ns-01: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
     link/ether 0e:77:22:e7:68:6e brd ff:ff:ff:ff:ff:ff
 19: veth-for-ns-01@veth-for-ns-02: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
     link/ether 06:ad:97:47:a5:17 brd ff:ff:ff:ff:ff:ff
 </code></pre>
-<p>Place one end of <strong>veth</strong> pair in ns-01 and the other end in ns-02</p>
-<p>command:</p>
+<p>Place one end of the <strong>veth</strong> pair in <code>ns-01</code> and the other in <code>ns-02</code>:</p>
 <pre><code class="language-bash">ip link set veth-for-ns-01 netns ns-01
+ip link set veth-for-ns-02 netns ns-02
 </code></pre>
-<pre><code class="language-bash">ip link set veth-for-ns-02 netns ns-02
-</code></pre>
-<p>inspect:</p>
+<p>Inspect:</p>
 <pre><code class="language-bash">ip link | grep -A1 veth-for-ns-01
 </code></pre>
-<p>At this point both items (18,19) won't be present in the list.</p>
-<p>Execute command inside both namespaces to ensure that <strong>veth</strong> ends are added to corresponded network namespaces.</p>
-<p>command:</p>
+<p>At this point, both items (18, 19) won't be present in the list.</p>
+<p>Execute inside both namespaces to ensure that <strong>veth</strong> ends are added to the correct network namespaces:</p>
 <pre><code class="language-bash">ip -n ns-01 link
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 19: veth-for-ns-01@if18: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
     link/ether 06:ad:97:47:a5:17 brd ff:ff:ff:ff:ff:ff link-netnsid 1
 </code></pre>
 <hr>
-<h3>Assign IP address to Network Namespace's veth</h3>
-<p>command:</p>
+<h2>Assign IP Address to Network Namespace's veth</h2>
 <pre><code class="language-bash">ip -n ns-01 addr add 192.168.10.1/24 dev veth-for-ns-01
+ip -n ns-02 addr add 192.168.10.2/24 dev veth-for-ns-02
 </code></pre>
-<pre><code class="language-bash">ip -n ns-02 addr add 192.168.10.2/24 dev veth-for-ns-02
-</code></pre>
-<p>inspect:</p>
+<p>Inspect:</p>
 <pre><code class="language-bash">ip -n ns-01 addr
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 19: veth-for-ns-01@if18: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN group default qlen 1000
@@ -117,27 +103,24 @@ ns-01
        valid_lft forever preferred_lft forever
 </code></pre>
 <hr>
-<h3>Bringing veth UP</h3>
-<p>command:</p>
+<h2>Bring veth UP</h2>
 <pre><code class="language-bash">ip -n ns-01 link set veth-for-ns-01 up
+ip -n ns-02 link set veth-for-ns-02 up
 </code></pre>
-<pre><code class="language-bash">ip -n ns-02 link set veth-for-ns-02 up
-</code></pre>
-<p>inspect:</p>
+<p>Inspect:</p>
 <pre><code class="language-bash">ip -n ns-02 link
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 18: veth-for-ns-02@if19: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
     link/ether 0e:77:22:e7:68:6e brd ff:ff:ff:ff:ff:ff link-netnsid 0
 </code></pre>
 <hr>
-<h3>Check connection beetween Network Namespaces</h3>
-<p>inspect:</p>
+<h2>Check Connection Between Network Namespaces</h2>
 <pre><code class="language-bash">ip netns exec ns-01 ping -c1 192.168.10.2
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">PING 192.168.10.2 (192.168.10.2) 56(84) bytes of data.
 64 bytes from 192.168.10.2: icmp_seq=1 ttl=64 time=0.051 ms
 
@@ -145,10 +128,9 @@ ns-01
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 0.051/0.051/0.051/0.000 ms
 </code></pre>
-<p>inspect:</p>
 <pre><code class="language-bash">ip netns exec ns-02 ping -c1 192.168.10.1
 </code></pre>
-<p>output:</p>
+<p><strong>Output:</strong></p>
 <pre><code class="language-bash">PING 192.168.10.1 (192.168.10.1) 56(84) bytes of data.
 64 bytes from 192.168.10.1: icmp_seq=1 ttl=64 time=0.047 ms
 

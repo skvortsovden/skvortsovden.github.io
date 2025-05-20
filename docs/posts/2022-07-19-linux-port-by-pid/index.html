@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Linux. Find port number used by process with CAT and ECHO</title>
+  <title>Linux: Find Port Number Used by Process with CAT and ECHO</title>
   <link rel="stylesheet" href="/styles/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -22,36 +22,39 @@
     </ul>
   </nav>
   <main>
-    <h1>Linux. Find port number used by process with CAT and ECHO</h1>
-    <p>In this post, I show how to find <strong>port number in-use by process</strong> having its <code>PID</code> and using two native linux command - <code>CAT</code> end <code>ECHO</code> in <code>BASH</code>.</p>
-<h2>0. Pick-up some randm PID from processes list on a linux system</h2>
+    <h1>Linux: Find Port Number Used by Process with CAT and ECHO</h1>
+    <p>In this post, I'll show how to find the <strong>port number used by a process</strong> when you know its <code>PID</code>, using two native Linux commands: <code>cat</code> and <code>echo</code> in <code>bash</code>.</p>
+<hr>
+<h2>1. Pick a Random PID</h2>
+<p>List the contents of <code>/proc</code> to see running process IDs:</p>
 <pre><code class="language-bash">ls /proc
 </code></pre>
-<p>output:</p>
-<pre><code>1   33	  asound     cgroups	consoles  devices    driver	  ...
+<p>Example output:</p>
+<pre><code>1   33   asound   cgroups   consoles   devices   driver   ...
 </code></pre>
-<h2>1. Print processes TCP connection info</h2>
-<pre><code class="language-bash">cat /proc/$YOUR_PID_HERE/net/tcp
+<hr>
+<h2>2. Print Process TCP Connection Info</h2>
+<p>Display TCP connections for a specific process by replacing <code>$PID</code> with your process ID:</p>
+<pre><code class="language-bash">cat /proc/$PID/net/tcp
 </code></pre>
-<p>In my case the command is:</p>
+<p>For example, with PID 33:</p>
 <pre><code class="language-bash">cat /proc/33/net/tcp
 </code></pre>
-<p>output:</p>
+<p>Sample output:</p>
 <pre><code>sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when retrnsmt   uid  timeout inode
 0: 00000000:0050 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 2078133 1 000000002283b263 100 0 0 10 0
 </code></pre>
-<p>From the output we can pick-up <strong>port number</strong> for <code>local_address</code>, which in this case is <strong>0050</strong>.</p>
-<h2>2. Convert PORT number</h2>
-<p>This value <strong>0050</strong> is <strong>hexadecimal</strong> number, so we need to convert it to <strong>decimal</strong>.</p>
-<pre><code class="language-bash">echo $((16#$YOUR_PORT_HERE))
-</code></pre>
-<p>In my case the command is:</p>
+<p>Look for the <strong>local_address</strong> column. The port number is the value after the colon (<code>:</code>), here it's <code>0050</code>.</p>
+<hr>
+<h2>3. Convert the Port Number from Hex to Decimal</h2>
+<p>The port number (<code>0050</code>) is in hexadecimal. Convert it to decimal with:</p>
 <pre><code class="language-bash">echo $((16#0050))
 </code></pre>
-<p>output:</p>
+<p>Output:</p>
 <pre><code>80
 </code></pre>
-<p>Enjoy your Linux!</p>
+<hr>
+<p>Now you know how to find which port a process is using by its PID!</p>
 
   </main>
   <footer class="site-footer">
