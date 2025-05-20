@@ -11,8 +11,10 @@ body {
 }
 
 img {
+    display: block;
     height: auto;
-    max-width: 100%;
+    max-width: 75%;
+    margin: 0 auto;
 }
 
 /* Typography */
@@ -92,4 +94,11 @@ nav li {
 .site-footer a:hover {
     color: #1a3a5d;
     text-decoration: none;
+}
+
+figcaption {
+    font-size: 0.9em;
+    margin-top: 0.5em;
+    text-align: center;
+    font-style: italic;
 }
