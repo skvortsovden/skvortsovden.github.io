@@ -12,7 +12,7 @@ I will update this list from time to time.
 
 ## The Lazy Jesus - Grunt
 
-The Lazy Jesus is a Ukrainian sound producer, DJ and musician. 
+> The Lazy Jesus is a Ukrainian sound producer, DJ and musician. 
 I love this song for its tribal vibe and the way it makes me want to move.
 
 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/0CneJMtCtYrGFuDq1qHBpK?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
