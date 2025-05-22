@@ -22,6 +22,20 @@ npm install
 npm start
 ```
 
+## Terraform
+
+The `terraform` directory contains code for the infrastructure used to host this website on Google Cloud.
+
+```bash
+terraform init
+terraform apply
+```
+
+If **terraform.state is not present** or has been deleted, you can `import` resources from the cloud back into the Terraform state.
+
+Use `terraform import` for each existing resource.
+
+
 ## License
 
 Content and code are provided under the [MIT License](LICENSE).
