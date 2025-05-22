@@ -348,13 +348,15 @@ Once it's done I have to point my domain the the bucket.
 
 > To connect your domain to Cloud Storage, create a CNAME record through your domain registration service.
 
-source: https://cloud.google.com/storage/docs/hosting-static-website-http#cname
+source: [https://cloud.google.com/storage/docs/hosting-static-website-http#cname](https://cloud.google.com/storage/docs/hosting-static-website-http#cname)
 
 One more this to make it work with my DNS and GCP bucket - I have to name my bucket the same as my domain name.
 
 > Create a bucket whose name matches the CNAME you created for your domain.
 
 source: [https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket](https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket)
+
+Eventually I have my website available at [http://www.skvortsovden.pp.ua](http://www.skvortsovden.pp.ua)
 
 
 ## Things I learned
