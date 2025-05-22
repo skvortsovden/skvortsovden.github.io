@@ -27,29 +27,29 @@
   </nav>
   <main>
     <h1>Hosting personal website on Google Cloud</h1>
-    <p>I have <a href="https://skvortsovden.github.io/">this website</a> hosted on GitHub Pages, but I decided to learn how to work with GCP, Github Actions, and Terraform.</p>
+    <p>I have <a href="https://skvortsovden.github.io/">this website</a> hosted on GitHub Pages, but I decided to learn how to work with GCP, GitHub Actions, and Terraform.</p>
 <p>So, here we go!</p>
-<p>The official documentation on <a href="https://cloud.google.com/storage/docs/hosting-static-website">How to host static website on GCP</a> is great.</p>
+<p>The official documentation on <a href="https://cloud.google.com/storage/docs/hosting-static-website">How to host a static website on GCP</a> is great.</p>
 <blockquote>
-<p>I will omit the steps to create a GCP account and set up billing because it's boring.
+<p>I will omit the steps to create a GCP account and set up billing because they're boring.
 I'll focus on the high-level steps with some code snippets to illustrate the process.</p>
 </blockquote>
 <h2>Google Cloud Platform (GCP)</h2>
-<p>GCP have <strong>a free tier</strong> that allows you to host a static website for free.
-see: <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">https://cloud.google.com/free/docs/free-cloud-features#storage</a></p>
+<p>GCP has <strong>a free tier</strong> that allows you to host a static website for free.
+See: <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">https://cloud.google.com/free/docs/free-cloud-features#storage</a></p>
 <blockquote>
 <p>Free Tier is only available in us-east1, us-west1, and us-central1 regions.</p>
 </blockquote>
-<p>GPC is organized into <strong>projects</strong>. Each project has its own resources, billing, and permissions.</p>
+<p>GCP is organized into <strong>projects</strong>. Each project has its own resources, billing, and permissions.</p>
 <p>So, the <strong>first step is to create a project</strong>.</p>
-<p>I am using gcloud CLI to create the project.</p>
+<p>I am using the gcloud CLI to create the project.</p>
 <pre><code class="language-bash">gcloud projects create skvortsovden-website-project
 </code></pre>
-<p>Although I like using the CLI more than the web console (old school boy), there is even better approach: to follow <strong>IaC (Infrastructure as Code)</strong> principles.
+<p>Although I prefer using the CLI over the web console (old school), there is an even better approach: following <strong>IaC (Infrastructure as Code)</strong> principles.
 So, I will use Terraform to create the project and all the resources.</p>
 <h2>Terraform</h2>
-<p>Let's make groundwork for our infrastructure.</p>
-<p>Bare minimum terraform configuration to kick off.</p>
+<p>Let's lay the groundwork for our infrastructure.</p>
+<p>Here's the bare minimum Terraform configuration to get started.</p>
 <p>I'll start with the <strong>vars.tf</strong> file.</p>
 <p>Define variables for:</p>
 <ul>
@@ -70,14 +70,14 @@ variable &quot;project_name&quot; {
 }
 </code></pre>
 <p>Now, let's create the <strong>main.tf</strong> configuration file.
-Terraform automagically reads variables from the file if you name it <code>vars.tf</code> and put it in the same directory as <code>main.tf</code>.</p>
+Terraform automatically reads variables from the file if you name it <code>vars.tf</code> and put it in the same directory as <code>main.tf</code>.</p>
 <pre><code class="language-hcl"># terraform/main.tf
 terraform {
   required_providers {
-  google = {
-    source  = &quot;hashicorp/google&quot;
-    version = &quot;~&gt; 3.5&quot;
-  }
+    google = {
+      source  = &quot;hashicorp/google&quot;
+      version = &quot;~&gt; 3.5&quot;
+    }
   }
 }
 provider &quot;google&quot; {
@@ -93,7 +93,7 @@ resource &quot;google_project&quot; &quot;website_project&quot; {
 <p>The variables are referenced using the <code>var.&lt;variable_name&gt;</code> syntax.</p>
 <p>Let's terraform the ground.</p>
 <blockquote>
-<p>If the resource is already created using CLI or WEB UI, you can import it into Terraform state using the <code>terraform import</code> command.</p>
+<p>If the resource is already created using the CLI or web UI, you can import it into the Terraform state using the <code>terraform import</code> command.</p>
 </blockquote>
 <pre><code class="language-bash"># command
 terraform import google_project.website_project projects/skvortsovden-website-project
@@ -109,7 +109,7 @@ Import successful!
 The resources that were imported are shown above. These resources are now in
 your Terraform state and will henceforth be managed by Terraform.
 </code></pre>
-<p>Nice, my local terraform is synced with the remote GCP resources.</p>
+<p>Nice, my local Terraform is synced with the remote GCP resources.</p>
 <p>Now, when I run <code>terraform apply</code>, it will not create a new project, but will update the existing one.</p>
 <pre><code class="language-bash"># output
 google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
@@ -122,28 +122,28 @@ Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 </code></pre>
 <p>At this point, we have a project created in GCP.</p>
 <h2>GCP Cloud Storage</h2>
-<p>I use <strong>Cloud Storage to store static files</strong> (html, css, js, images)</p>
+<p>I use <strong>Cloud Storage to store static files</strong> (HTML, CSS, JS, images).</p>
 <blockquote>
 <p>Cloud Storage is a service for storing your <strong>objects</strong> in Google Cloud. An object is an immutable piece of data consisting of a file of any format. You store objects in containers called <strong>buckets</strong>.</p>
 </blockquote>
-<p>source: <a href="https://cloud.google.com/storage/docs/introduction">https://cloud.google.com/storage/docs/introduction</a></p>
-<p>Free tier allows you to <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">store up to 5GB</a> of data in Cloud Storage.</p>
-<p>I believe my website should fit into this limit :)</p>
-<p>Adding bucket resource to the <code>main.tf</code> file.</p>
+<p>Source: <a href="https://cloud.google.com/storage/docs/introduction">https://cloud.google.com/storage/docs/introduction</a></p>
+<p>The free tier allows you to <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">store up to 5GB</a> of data in Cloud Storage.</p>
+<p>I believe my website should fit within this limit :)</p>
+<p>Add the bucket resource to the <code>main.tf</code> file.</p>
 <pre><code class="language-hcl"># terraform/main.tf
 resource &quot;google_storage_bucket&quot; &quot;website_bucket&quot; {
   name     = var.bucket_name
   location = var.location
   website {
-  main_page_suffix = &quot;index.html&quot;
-  not_found_page   = &quot;404.html&quot;
+    main_page_suffix = &quot;index.html&quot;
+    not_found_page   = &quot;404.html&quot;
   }
 }
 </code></pre>
 <pre><code class="language-bash"># terraform apply
 The billing account for the owning project is disabled in state absent, accountDisabled
 </code></pre>
-<p>Opps. I need to enable billing for the project.
+<p>Oops. I need to enable billing for the project.
 I had to go to the GCP console and enable billing for the project.
 I just didn't want to create another billing account, so I used the existing one.</p>
 <p>Let's try <code>terraform apply</code> again.</p>
@@ -156,33 +156,33 @@ google_project.website_project: Modifications complete after 3s [id=projects/skv
 Apply complete! Resources: 1 added, 1 changed, 0 destroyed.
 </code></pre>
 <p>Cool. Now we have a container (bucket) to store our static files.</p>
-<h2>Github Actions</h2>
-<p>Next step is to upload files to the bucket.
+<h2>GitHub Actions</h2>
+<p>The next step is to upload files to the bucket.
 I have my static files stored in the GitHub repository.
 So, first I have to create a <strong>CI/CD pipeline</strong> to upload files to the bucket.</p>
 <p>I will use <strong>GitHub Actions</strong> to do that.</p>
 <blockquote>
 <p>GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that run tests whenever you push a change to your repository, or that deploy merged pull requests to production.</p>
 </blockquote>
-<p>source: <a href="https://docs.github.com/en/actions/writing-workflows/quickstart">https://docs.github.com/en/actions/writing-workflows/quickstart</a></p>
+<p>Source: <a href="https://docs.github.com/en/actions/writing-workflows/quickstart">https://docs.github.com/en/actions/writing-workflows/quickstart</a></p>
 <p>There are templates available for GitHub Actions, but <strong>I can't find one for Cloud Storage/Bucket</strong>.</p>
-<p>templates: <a href="https://github.com/actions/starter-workflows/tree/main/deployments">https://github.com/actions/starter-workflows/tree/main/deployments</a></p>
+<p>Templates: <a href="https://github.com/actions/starter-workflows/tree/main/deployments">https://github.com/actions/starter-workflows/tree/main/deployments</a></p>
 <p>So, <strong>I will create a custom workflow</strong> to upload files to the bucket.</p>
 <h3>Pipeline</h3>
 <p>Let's break down the pipeline into steps.</p>
 <ol>
-<li>Checkout the files from repository</li>
-<li>Authentificate to GCP</li>
-<li>Upload files to GCP bucket</li>
+<li>Checkout the files from the repository</li>
+<li>Authenticate to GCP</li>
+<li>Upload files to the GCP bucket</li>
 </ol>
-<p>Using <strong>existing actions</strong> for each step to simplyfy the workflow:</p>
+<p>Using <strong>existing actions</strong> for each step to simplify the workflow:</p>
 <ol>
 <li>https://github.com/actions/checkout</li>
 <li>https://github.com/google-github-actions/auth</li>
 <li>https://github.com/google-github-actions/upload-cloud-storage</li>
 </ol>
 <p>The <strong>pipeline should be triggered</strong> every time I <strong>push my changes</strong> to the main branch.</p>
-<p>Let's create a new file in <code>.github/workflows</code> directory.</p>
+<p>Let's create a new file in the <code>.github/workflows</code> directory.</p>
 <pre><code class="language-yaml"># .github/workflows/gcp-bucket-deployment.yaml
 name: Deploy to Google Cloud Storage
 
@@ -221,18 +221,18 @@ jobs:
 <h2>GCP Service Account</h2>
 <p>To make it work, I need to create a <strong>service account</strong> in GCP and give it permissions to upload files to the bucket.</p>
 <p>I don't want to use my personal account credentials anywhere except my local machine.</p>
-<p>I'll create a <strong>service account</strong> for Github.</p>
+<p>I'll create a <strong>service account</strong> for GitHub.</p>
 <blockquote>
 <p>A service account is a special kind of account typically used by an application or compute workload, such as a Compute Engine instance, rather than a person. A service account is identified by its email address, which is unique to the account.</p>
 </blockquote>
-<p>source: <a href="https://cloud.google.com/iam/docs/service-account-overview">https://cloud.google.com/iam/docs/service-account-overview</a></p>
+<p>Source: <a href="https://cloud.google.com/iam/docs/service-account-overview">https://cloud.google.com/iam/docs/service-account-overview</a></p>
 <h2>GCP Identity and Access Management (IAM)</h2>
-<p>Now I have to make sure a service account has only read/write access to my bucket.</p>
+<p>Now I have to make sure the service account has only read/write access to my bucket.</p>
 <blockquote>
 <p><strong>IAM</strong> allows you to control <strong>who has access to the resources</strong> in your Google Cloud project.</p>
 </blockquote>
 <p>I will use <strong>Terraform</strong> to create the service account and give it permissions.</p>
-<p>To find out the role to use for service account see:
+<p>To find out the role to use for the service account, see:
 <a href="https://cloud.google.com/storage/docs/access-control/iam-roles">https://cloud.google.com/storage/docs/access-control/iam-roles</a></p>
 <p>The role <strong>Storage Object User (roles/storage.objectUser)</strong> looks like a good role to use for the service account.</p>
 <pre><code class="language-hcl"># terraform/main.tf
@@ -247,13 +247,13 @@ resource &quot;google_storage_bucket_iam_member&quot; &quot;website_bucket_iam_m
   member = &quot;serviceAccount:${google_service_account.website_service_account.email}&quot;
 }
 </code></pre>
-<p><strong>GCP_SA_KEY</strong> - see how to create/get key for your service account here:
+<p><strong>GCP_SA_KEY</strong> – see how to create/get a key for your service account here:
 <a href="https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console">https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console</a></p>
-<h2>Configuring Github</h2>
-<p>Before adding workflow to my repo I need to configure environment variables in my repo.</p>
-<p>In the github repo go to <strong>/settings/secrets/actions</strong>.</p>
-<p>Craete new environment to store secrets for GCP.
-I'll name it <code>gcp</code></p>
+<h2>Configuring GitHub</h2>
+<p>Before adding the workflow to my repo, I need to configure environment variables in my repo.</p>
+<p>In the GitHub repo, go to <strong>/settings/secrets/actions</strong>.</p>
+<p>Create a new environment to store secrets for GCP.
+I'll name it <code>gcp</code>.</p>
 <p>Add the following environment secrets:</p>
 <ul>
 <li>GCP_PROJECT_ID</li>
@@ -261,15 +261,15 @@ I'll name it <code>gcp</code></p>
 <li>GCS_BUCKET_NAME</li>
 </ul>
 <p><img src="/img/scr02.png" alt="Screenshot"></p>
-<h2>Kick-of the pipeline</h2>
-<p>Add the file <a href=".github/workflows/gcp-bucket-deployment.yaml">.github/workflows/gcp-bucket-deployment.yaml</a> to the git, commit and push changes upstream.</p>
-<p>It should kick-off the pipeline.</p>
-<p>Check github/actions page.</p>
+<h2>Kick-off the Pipeline</h2>
+<p>Add the file <a href=".github/workflows/gcp-bucket-deployment.yaml">.github/workflows/gcp-bucket-deployment.yaml</a> to git, commit, and push changes upstream.</p>
+<p>It should kick off the pipeline.</p>
+<p>Check the GitHub Actions page.</p>
 <p>It works!</p>
-<p>I have all my files uploaded on GCP bucket now.</p>
+<p>I have all my files uploaded to the GCP bucket now.</p>
 <p><img src="/img/scr03.png" alt="Screenshot"></p>
-<p>Cool. But <strong>how to make it publicly available?</strong></p>
-<p>Let's navigate to this page and still terraform snippet:<br>
+<p>Cool. But <strong>how do I make it publicly available?</strong></p>
+<p>Let's navigate to this page and steal the Terraform snippet:<br>
 <a href="https://cloud.google.com/storage/docs/hosting-static-website#terraform_1">https://cloud.google.com/storage/docs/hosting-static-website#terraform_1</a></p>
 <pre><code class="language-hcl"># Make bucket public by granting allUsers storage.objectViewer access
 resource &quot;google_storage_bucket_iam_member&quot; &quot;public_rule&quot; {
@@ -280,7 +280,15 @@ resource &quot;google_storage_bucket_iam_member&quot; &quot;public_rule&quot; {
 </code></pre>
 <p>After making my files on the bucket accessible from the internet by link:
 <a href="https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html">https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html</a></p>
-<p>Next I want to make it available by short domain name.</p>
+<p>Next, I want to make it available by a short domain name.</p>
+<h2>Things I learned so far</h2>
+<ul>
+<li>A project is the top-level abstraction in GCP</li>
+<li>Each project has to be linked to a billing account</li>
+<li>Terraform uses local state to track the state of resources on the cloud</li>
+<li>Terraform automatically detects variables from the var.tf file next to main.tf</li>
+<li>Service accounts and IAM roles work together to give access and set permissions for external services like GitHub Actions</li>
+</ul>
 
   </main>
   <footer class="site-footer">
