@@ -171,11 +171,16 @@ So, first I have to create a <strong>CI/CD pipeline</strong> to upload files to 
 <h3>Pipeline</h3>
 <p>Let's break down the pipeline into steps.</p>
 <ol>
-<li>Checkout the code</li>
-<li>Set up Gcloud SDK</li>
-<li>Upload files to the bucket</li>
+<li>Checkout the files from repository</li>
+<li>Authentificate to GCP</li>
+<li>Upload files to GCP bucket</li>
 </ol>
-<p><img src="/img/scr01.png" alt="Screenshot of GCP setup"></p>
+<p>Using <strong>existing actions</strong> for each step to simplyfy the workflow:</p>
+<ol>
+<li>https://github.com/actions/checkout</li>
+<li>https://github.com/google-github-actions/auth</li>
+<li>https://github.com/google-github-actions/upload-cloud-storage</li>
+</ol>
 <p>The <strong>pipeline should be triggered</strong> every time I <strong>push my changes</strong> to the main branch.</p>
 <p>Let's create a new file in <code>.github/workflows</code> directory.</p>
 <pre><code class="language-yaml"># .github/workflows/gcp-bucket-deployment.yaml
@@ -183,29 +188,53 @@ name: Deploy to Google Cloud Storage
 
 on:
   push:
-  branches:
-    - main
+    branches:
+      - main
 
 jobs:
   deploy:
-  runs-on: ubuntu-latest
+    # Any runner supporting Node 20 or newer
+    runs-on: ubuntu-latest
+    environment: gcp
 
-  steps:
-    - name: Checkout repository
-    uses: actions/checkout@v3
+    # Add &quot;id-token&quot; with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
-    - name: Set up Gcloud SDK
-    uses: google-github-actions/setup-gcloud@v2
-    with:
-      project_id: $
-      service_account_key: $
+    steps:
+    - id: 'checkout'
+      uses: 'actions/checkout@v4'
 
-    - name: Upload files to the bucket
-    run: |
-      gsutil -m rsync -r . gs://$
+    - id: 'gcp_auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        project_id: '$'
+        credentials_json: '$'
+
+    - id: 'gcp_upload_file'
+      uses: 'google-github-actions/upload-cloud-storage@v2'
+      with:
+        path: 'docs'
+        destination: $
 </code></pre>
-<p>To make it work, I need to create a <strong>service account</strong> in GCP and give it permissions to upload files to the bucket.
-I will use <strong>Terraform</strong> to create the service account and give it permissions.</p>
+<h2>GCP Service Account</h2>
+<p>To make it work, I need to create a <strong>service account</strong> in GCP and give it permissions to upload files to the bucket.</p>
+<p>I don't want to use my personal account credentials anywhere except my local machine.</p>
+<p>I'll create a <strong>service account</strong> for Github.</p>
+<blockquote>
+<p>A service account is a special kind of account typically used by an application or compute workload, such as a Compute Engine instance, rather than a person. A service account is identified by its email address, which is unique to the account.</p>
+</blockquote>
+<p>source: <a href="https://cloud.google.com/iam/docs/service-account-overview">https://cloud.google.com/iam/docs/service-account-overview</a></p>
+<h2>GCP Identity and Access Management (IAM)</h2>
+<p>Now I have to make sure a service account has only read/write access to my bucket.</p>
+<blockquote>
+<p><strong>IAM</strong> allows you to control <strong>who has access to the resources</strong> in your Google Cloud project.</p>
+</blockquote>
+<p>I will use <strong>Terraform</strong> to create the service account and give it permissions.</p>
+<p>To find out the role to use for service account see:
+<a href="https://cloud.google.com/storage/docs/access-control/iam-roles">https://cloud.google.com/storage/docs/access-control/iam-roles</a></p>
+<p>The role <strong>Storage Object User (roles/storage.objectUser)</strong> looks like a good role to use for the service account.</p>
 <pre><code class="language-hcl"># terraform/main.tf
 resource &quot;google_service_account&quot; &quot;website_service_account&quot; {
   account_id   = &quot;website-service-account&quot;
@@ -214,10 +243,44 @@ resource &quot;google_service_account&quot; &quot;website_service_account&quot; 
 }
 resource &quot;google_storage_bucket_iam_member&quot; &quot;website_bucket_iam_member&quot; {
   bucket = google_storage_bucket.website_bucket.name
-  role   = &quot;roles/storage.objectAdmin&quot;
+  role   = &quot;roles/storage.objectUser&quot;
   member = &quot;serviceAccount:${google_service_account.website_service_account.email}&quot;
 }
 </code></pre>
+<p><strong>GCP_SA_KEY</strong> - see how to create/get key for your service account here:
+<a href="https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console">https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console</a></p>
+<h2>Configuring Github</h2>
+<p>Before adding workflow to my repo I need to configure environment variables in my repo.</p>
+<p>In the github repo go to <strong>/settings/secrets/actions</strong>.</p>
+<p>Craete new environment to store secrets for GCP.
+I'll name it <code>gcp</code></p>
+<p>Add the following environment secrets:</p>
+<ul>
+<li>GCP_PROJECT_ID</li>
+<li>GCP_SA_KEY</li>
+<li>GCS_BUCKET_NAME</li>
+</ul>
+<p><img src="/img/scr02.png" alt="Screenshot"></p>
+<h2>Kick-of the pipeline</h2>
+<p>Add the file <a href=".github/workflows/gcp-bucket-deployment.yaml">.github/workflows/gcp-bucket-deployment.yaml</a> to the git, commit and push changes upstream.</p>
+<p>It should kick-off the pipeline.</p>
+<p>Check github/actions page.</p>
+<p>It works!</p>
+<p>I have all my files uploaded on GCP bucket now.</p>
+<p><img src="/img/scr03.png" alt="Screenshot"></p>
+<p>Cool. But <strong>how to make it publicly available?</strong></p>
+<p>Let's navigate to this page and still terraform snippet:<br>
+<a href="https://cloud.google.com/storage/docs/hosting-static-website#terraform_1">https://cloud.google.com/storage/docs/hosting-static-website#terraform_1</a></p>
+<pre><code class="language-hcl"># Make bucket public by granting allUsers storage.objectViewer access
+resource &quot;google_storage_bucket_iam_member&quot; &quot;public_rule&quot; {
+  bucket = google_storage_bucket.website_bucket.name
+  role   = &quot;roles/storage.objectViewer&quot;
+  member = &quot;allUsers&quot;
+}
+</code></pre>
+<p>After making my files on the bucket accessible from the internet by link:
+<a href="https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html">https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html</a></p>
+<p>Next I want to make it available by short domain name.</p>
 
   </main>
   <footer class="site-footer">
