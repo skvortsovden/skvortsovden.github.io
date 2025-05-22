@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hosting personal website on GCP</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+        <li>
+          <a href="/film/">film</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>Hosting personal website on GCP</h1>
+    <p>I have <a href="https://skvortsovden.github.io/">this website</a> hosted on GitHub Pages, but I decided to learn how to work with GCP, Github Actions, and Terraform.</p>
+<p>So, here we go!</p>
+<p>The official documentation on <a href="https://cloud.google.com/storage/docs/hosting-static-website">How to host static website on GCP</a> is great.</p>
+<blockquote>
+<p>I will omit the steps to create a GCP account and set up billing because it's boring.
+I'll focus on the high-level steps with some code snippets to illustrate the process.</p>
+</blockquote>
+<h1>Google Cloud Platform (GCP)</h1>
+<p>GPC is organized into <strong>projects</strong>. Each project has its own resources, billing, and permissions.</p>
+<p>So, the first step is to create a project.</p>
+<p>I am using gcloud CLI to create the project.</p>
+<pre><code class="language-bash">gcloud projects create skvortsovden-website-project
+</code></pre>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>
