@@ -9,7 +9,7 @@ variable "region" {
 variable "project_name" {
     description = "Name of the project"
     type        = string
-    default     = "skvortsovden-website-project"
+    default     = "pp-ua-site-project"
 }
 
 variable "billing_account_id" {
@@ -27,6 +27,6 @@ variable "location" {
 variable "bucket_name" {
     description = "Name of the GCP storage bucket"
     type        = string
-    default     = "skvortsovden-website-bucket"
+    default     = "www.skvortsovden.pp.ua"
   
 }

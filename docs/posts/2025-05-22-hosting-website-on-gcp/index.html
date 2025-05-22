@@ -43,7 +43,7 @@ See: <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">ht
 <p>GCP is organized into <strong>projects</strong>. Each project has its own resources, billing, and permissions.</p>
 <p>So, the <strong>first step is to create a project</strong>.</p>
 <p>I am using the gcloud CLI to create the project.</p>
-<pre><code class="language-bash">gcloud projects create skvortsovden-website-project
+<pre><code class="language-bash">gcloud projects create pp-ua-site-project
 </code></pre>
 <p>Although I prefer using the CLI over the web console (old school), there is an even better approach: following <strong>IaC (Infrastructure as Code)</strong> principles.
 So, I will use Terraform to create the project and all the resources.</p>
@@ -66,7 +66,7 @@ variable &quot;region&quot; {
 variable &quot;project_name&quot; {
   description = &quot;Name of the project&quot;
   type        = string
-  default     = &quot;skvortsovden-website-project&quot;
+  default     = &quot;pp-ua-site-project&quot;
 }
 </code></pre>
 <p>Now, let's create the <strong>main.tf</strong> configuration file.
@@ -96,13 +96,13 @@ resource &quot;google_project&quot; &quot;website_project&quot; {
 <p>If the resource is already created using the CLI or web UI, you can import it into the Terraform state using the <code>terraform import</code> command.</p>
 </blockquote>
 <pre><code class="language-bash"># command
-terraform import google_project.website_project projects/skvortsovden-website-project
+terraform import google_project.website_project projects/pp-ua-site-project
 </code></pre>
 <pre><code class="language-bash"># output
-google_project.website_project: Importing from ID &quot;projects/skvortsovden-website-project&quot;...
+google_project.website_project: Importing from ID &quot;projects/pp-ua-site-project&quot;...
 google_project.website_project: Import prepared!
   Prepared google_project for import
-google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+google_project.website_project: Refreshing state... [id=projects/pp-ua-site-project]
 
 Import successful!
 
@@ -112,7 +112,7 @@ your Terraform state and will henceforth be managed by Terraform.
 <p>Nice, my local Terraform is synced with the remote GCP resources.</p>
 <p>Now, when I run <code>terraform apply</code>, it will not create a new project, but will update the existing one.</p>
 <pre><code class="language-bash"># output
-google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+google_project.website_project: Refreshing state... [id=projects/pp-ua-site-project]
 
 No changes. Your infrastructure matches the configuration.
 
@@ -148,10 +148,10 @@ I had to go to the GCP console and enable billing for the project.
 I just didn't want to create another billing account, so I used the existing one.</p>
 <p>Let's try <code>terraform apply</code> again.</p>
 <pre><code class="language-bash"># output
-google_project.website_project: Modifying... [id=projects/skvortsovden-website-project]
+google_project.website_project: Modifying... [id=projects/pp-ua-site-project]
 google_storage_bucket.website_bucket: Creating...
-google_storage_bucket.website_bucket: Creation complete after 1s [id=skvortsovden-website-bucket]
-google_project.website_project: Modifications complete after 3s [id=projects/skvortsovden-website-project]
+google_storage_bucket.website_bucket: Creation complete after 1s [id=pp-ua-site-bucket]
+google_project.website_project: Modifications complete after 3s [id=projects/pp-ua-site-project]
 
 Apply complete! Resources: 1 added, 1 changed, 0 destroyed.
 </code></pre>
@@ -279,9 +279,22 @@ resource &quot;google_storage_bucket_iam_member&quot; &quot;public_rule&quot; {
 }
 </code></pre>
 <p>After making my files on the bucket accessible from the internet by link:
-<a href="https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html">https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html</a></p>
+<a href="https://storage.googleapis.com/pp-ua-site-bucket/docs/index.html">https://storage.googleapis.com/pp-ua-site-bucket/docs/index.html</a></p>
 <p>Next, I want to make it available by a short domain name.</p>
-<h2>Things I learned so far</h2>
+<h2>Connecting your domain to Cloud Storage</h2>
+<p>For this exersice I don't want to pay any money so I found a way to register free domain name using Ukrainian hosting <a href="https://nic.ua/">nic.ua</a>.</p>
+<p>You can register <code>.pp.ua</code> domain name for free!</p>
+<p>Once it's done I have to point my domain the the bucket.</p>
+<blockquote>
+<p>To connect your domain to Cloud Storage, create a CNAME record through your domain registration service.</p>
+</blockquote>
+<p>source: https://cloud.google.com/storage/docs/hosting-static-website-http#cname</p>
+<p>One more this to make it work with my DNS and GCP bucket - I have to name my bucket the same as my domain name.</p>
+<blockquote>
+<p>Create a bucket whose name matches the CNAME you created for your domain.</p>
+</blockquote>
+<p>source: <a href="https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket">https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket</a></p>
+<h2>Things I learned</h2>
 <ul>
 <li>A project is the top-level abstraction in GCP</li>
 <li>Each project has to be linked to a billing account</li>

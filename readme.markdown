@@ -35,6 +35,15 @@ If **terraform.state is not present** or has been deleted, you can `import` reso
 
 Use `terraform import` for each existing resource.
 
+```bash
+terraform import google_project.website_project projects/pp-ua-site-project
+
+terraform import google_service_account.website_service_account website-service-account@pp-ua-site-project.iam.gserviceaccount.com
+
+terraform import google_storage_bucket.website_bucket buckets/pp-ua-site-bucket
+
+
+```
 
 ## License
 

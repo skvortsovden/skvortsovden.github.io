@@ -20,6 +20,7 @@ resource "google_project" "website_project" {
 resource "google_storage_bucket" "website_bucket" {
   name     = var.bucket_name
   location = var.location
+  force_destroy = true
   website {
     main_page_suffix = "index.html"
     not_found_page   = "404.html"

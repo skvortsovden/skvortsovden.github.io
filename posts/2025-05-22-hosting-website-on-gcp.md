@@ -27,7 +27,7 @@ So, the **first step is to create a project**.
 I am using the gcloud CLI to create the project.
 
 ```bash
-gcloud projects create skvortsovden-website-project
+gcloud projects create pp-ua-site-project
 ```
 
 Although I prefer using the CLI over the web console (old school), there is an even better approach: following **IaC (Infrastructure as Code)** principles.
@@ -57,7 +57,7 @@ variable "region" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "skvortsovden-website-project"
+  default     = "pp-ua-site-project"
 }
 ```
 
@@ -93,15 +93,15 @@ Let's terraform the ground.
 
 ```bash
 # command
-terraform import google_project.website_project projects/skvortsovden-website-project
+terraform import google_project.website_project projects/pp-ua-site-project
 ```
 
 ```bash
 # output
-google_project.website_project: Importing from ID "projects/skvortsovden-website-project"...
+google_project.website_project: Importing from ID "projects/pp-ua-site-project"...
 google_project.website_project: Import prepared!
   Prepared google_project for import
-google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+google_project.website_project: Refreshing state... [id=projects/pp-ua-site-project]
 
 Import successful!
 
@@ -115,7 +115,7 @@ Now, when I run `terraform apply`, it will not create a new project, but will up
 
 ```bash
 # output
-google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+google_project.website_project: Refreshing state... [id=projects/pp-ua-site-project]
 
 No changes. Your infrastructure matches the configuration.
 
@@ -165,10 +165,10 @@ Let's try `terraform apply` again.
 
 ```bash
 # output
-google_project.website_project: Modifying... [id=projects/skvortsovden-website-project]
+google_project.website_project: Modifying... [id=projects/pp-ua-site-project]
 google_storage_bucket.website_bucket: Creating...
-google_storage_bucket.website_bucket: Creation complete after 1s [id=skvortsovden-website-bucket]
-google_project.website_project: Modifications complete after 3s [id=projects/skvortsovden-website-project]
+google_storage_bucket.website_bucket: Creation complete after 1s [id=pp-ua-site-bucket]
+google_project.website_project: Modifications complete after 3s [id=projects/pp-ua-site-project]
 
 Apply complete! Resources: 1 added, 1 changed, 0 destroyed.
 ```
@@ -334,11 +334,30 @@ resource "google_storage_bucket_iam_member" "public_rule" {
 ```
 
 After making my files on the bucket accessible from the internet by link:
-[https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html](https://storage.googleapis.com/skvortsovden-website-bucket/docs/index.html)
+[https://storage.googleapis.com/pp-ua-site-bucket/docs/index.html](https://storage.googleapis.com/pp-ua-site-bucket/docs/index.html)
 
 Next, I want to make it available by a short domain name.
 
-## Things I learned so far
+## Connecting your domain to Cloud Storage
+
+For this exersice I don't want to pay any money so I found a way to register free domain name using Ukrainian hosting [nic.ua](https://nic.ua/).
+
+You can register `.pp.ua` domain name for free!
+
+Once it's done I have to point my domain the the bucket.
+
+> To connect your domain to Cloud Storage, create a CNAME record through your domain registration service.
+
+source: https://cloud.google.com/storage/docs/hosting-static-website-http#cname
+
+One more this to make it work with my DNS and GCP bucket - I have to name my bucket the same as my domain name.
+
+> Create a bucket whose name matches the CNAME you created for your domain.
+
+source: [https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket](https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket)
+
+
+## Things I learned
 
 - A project is the top-level abstraction in GCP
 - Each project has to be linked to a billing account
