@@ -31,3 +31,4 @@ jobs:
       with:
         path: 'docs'
         destination: ${{ secrets.GCS_BUCKET_NAME }}
+        parent: false
