@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hosting personal website on GCP</title>
+  <title>Hosting personal website on Google Cloud</title>
   <link rel="stylesheet" href="/styles/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -26,7 +26,7 @@
     </ul>
   </nav>
   <main>
-    <h1>Hosting personal website on GCP</h1>
+    <h1>Hosting personal website on Google Cloud</h1>
     <p>I have <a href="https://skvortsovden.github.io/">this website</a> hosted on GitHub Pages, but I decided to learn how to work with GCP, Github Actions, and Terraform.</p>
 <p>So, here we go!</p>
 <p>The official documentation on <a href="https://cloud.google.com/storage/docs/hosting-static-website">How to host static website on GCP</a> is great.</p>
@@ -34,11 +34,189 @@
 <p>I will omit the steps to create a GCP account and set up billing because it's boring.
 I'll focus on the high-level steps with some code snippets to illustrate the process.</p>
 </blockquote>
-<h1>Google Cloud Platform (GCP)</h1>
+<h2>Google Cloud Platform (GCP)</h2>
+<p>GCP have <strong>a free tier</strong> that allows you to host a static website for free.
+see: <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">https://cloud.google.com/free/docs/free-cloud-features#storage</a></p>
+<blockquote>
+<p>Free Tier is only available in us-east1, us-west1, and us-central1 regions.</p>
+</blockquote>
 <p>GPC is organized into <strong>projects</strong>. Each project has its own resources, billing, and permissions.</p>
-<p>So, the first step is to create a project.</p>
+<p>So, the <strong>first step is to create a project</strong>.</p>
 <p>I am using gcloud CLI to create the project.</p>
 <pre><code class="language-bash">gcloud projects create skvortsovden-website-project
+</code></pre>
+<p>Although I like using the CLI more than the web console (old school boy), there is even better approach: to follow <strong>IaC (Infrastructure as Code)</strong> principles.
+So, I will use Terraform to create the project and all the resources.</p>
+<h2>Terraform</h2>
+<p>Let's make groundwork for our infrastructure.</p>
+<p>Bare minimum terraform configuration to kick off.</p>
+<p>I'll start with the <strong>vars.tf</strong> file.</p>
+<p>Define variables for:</p>
+<ul>
+<li>project name (the one that is created in GCP)</li>
+<li>region (the one that is free tier eligible)</li>
+</ul>
+<pre><code class="language-hcl"># terraform/vars.tf
+
+variable &quot;region&quot; {
+  description = &quot;The GCP region to deploy resources in&quot;
+  type        = string
+  default     = &quot;us-east-1&quot;
+}
+variable &quot;project_name&quot; {
+  description = &quot;Name of the project&quot;
+  type        = string
+  default     = &quot;skvortsovden-website-project&quot;
+}
+</code></pre>
+<p>Now, let's create the <strong>main.tf</strong> configuration file.
+Terraform automagically reads variables from the file if you name it <code>vars.tf</code> and put it in the same directory as <code>main.tf</code>.</p>
+<pre><code class="language-hcl"># terraform/main.tf
+terraform {
+  required_providers {
+  google = {
+    source  = &quot;hashicorp/google&quot;
+    version = &quot;~&gt; 3.5&quot;
+  }
+  }
+}
+provider &quot;google&quot; {
+  project = var.project_name
+  region  = var.region
+}
+
+resource &quot;google_project&quot; &quot;website_project&quot; {
+  name       = var.project_name
+  project_id = var.project_name
+}
+</code></pre>
+<p>The variables are referenced using the <code>var.&lt;variable_name&gt;</code> syntax.</p>
+<p>Let's terraform the ground.</p>
+<blockquote>
+<p>If the resource is already created using CLI or WEB UI, you can import it into Terraform state using the <code>terraform import</code> command.</p>
+</blockquote>
+<pre><code class="language-bash"># command
+terraform import google_project.website_project projects/skvortsovden-website-project
+</code></pre>
+<pre><code class="language-bash"># output
+google_project.website_project: Importing from ID &quot;projects/skvortsovden-website-project&quot;...
+google_project.website_project: Import prepared!
+  Prepared google_project for import
+google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+
+Import successful!
+
+The resources that were imported are shown above. These resources are now in
+your Terraform state and will henceforth be managed by Terraform.
+</code></pre>
+<p>Nice, my local terraform is synced with the remote GCP resources.</p>
+<p>Now, when I run <code>terraform apply</code>, it will not create a new project, but will update the existing one.</p>
+<pre><code class="language-bash"># output
+google_project.website_project: Refreshing state... [id=projects/skvortsovden-website-project]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+</code></pre>
+<p>At this point, we have a project created in GCP.</p>
+<h2>GCP Cloud Storage</h2>
+<p>I use <strong>Cloud Storage to store static files</strong> (html, css, js, images)</p>
+<blockquote>
+<p>Cloud Storage is a service for storing your <strong>objects</strong> in Google Cloud. An object is an immutable piece of data consisting of a file of any format. You store objects in containers called <strong>buckets</strong>.</p>
+</blockquote>
+<p>source: <a href="https://cloud.google.com/storage/docs/introduction">https://cloud.google.com/storage/docs/introduction</a></p>
+<p>Free tier allows you to <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">store up to 5GB</a> of data in Cloud Storage.</p>
+<p>I believe my website should fit into this limit :)</p>
+<p>Adding bucket resource to the <code>main.tf</code> file.</p>
+<pre><code class="language-hcl"># terraform/main.tf
+resource &quot;google_storage_bucket&quot; &quot;website_bucket&quot; {
+  name     = var.bucket_name
+  location = var.location
+  website {
+  main_page_suffix = &quot;index.html&quot;
+  not_found_page   = &quot;404.html&quot;
+  }
+}
+</code></pre>
+<pre><code class="language-bash"># terraform apply
+The billing account for the owning project is disabled in state absent, accountDisabled
+</code></pre>
+<p>Opps. I need to enable billing for the project.
+I had to go to the GCP console and enable billing for the project.
+I just didn't want to create another billing account, so I used the existing one.</p>
+<p>Let's try <code>terraform apply</code> again.</p>
+<pre><code class="language-bash"># output
+google_project.website_project: Modifying... [id=projects/skvortsovden-website-project]
+google_storage_bucket.website_bucket: Creating...
+google_storage_bucket.website_bucket: Creation complete after 1s [id=skvortsovden-website-bucket]
+google_project.website_project: Modifications complete after 3s [id=projects/skvortsovden-website-project]
+
+Apply complete! Resources: 1 added, 1 changed, 0 destroyed.
+</code></pre>
+<p>Cool. Now we have a container (bucket) to store our static files.</p>
+<h2>Github Actions</h2>
+<p>Next step is to upload files to the bucket.
+I have my static files stored in the GitHub repository.
+So, first I have to create a <strong>CI/CD pipeline</strong> to upload files to the bucket.</p>
+<p>I will use <strong>GitHub Actions</strong> to do that.</p>
+<blockquote>
+<p>GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. You can create workflows that run tests whenever you push a change to your repository, or that deploy merged pull requests to production.</p>
+</blockquote>
+<p>source: <a href="https://docs.github.com/en/actions/writing-workflows/quickstart">https://docs.github.com/en/actions/writing-workflows/quickstart</a></p>
+<p>There are templates available for GitHub Actions, but <strong>I can't find one for Cloud Storage/Bucket</strong>.</p>
+<p>templates: <a href="https://github.com/actions/starter-workflows/tree/main/deployments">https://github.com/actions/starter-workflows/tree/main/deployments</a></p>
+<p>So, <strong>I will create a custom workflow</strong> to upload files to the bucket.</p>
+<h3>Pipeline</h3>
+<p>Let's break down the pipeline into steps.</p>
+<ol>
+<li>Checkout the code</li>
+<li>Set up Gcloud SDK</li>
+<li>Upload files to the bucket</li>
+</ol>
+<p><img src="/img/scr01.png" alt="Screenshot of GCP setup"></p>
+<p>The <strong>pipeline should be triggered</strong> every time I <strong>push my changes</strong> to the main branch.</p>
+<p>Let's create a new file in <code>.github/workflows</code> directory.</p>
+<pre><code class="language-yaml"># .github/workflows/gcp-bucket-deployment.yaml
+name: Deploy to Google Cloud Storage
+
+on:
+  push:
+  branches:
+    - main
+
+jobs:
+  deploy:
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout repository
+    uses: actions/checkout@v3
+
+    - name: Set up Gcloud SDK
+    uses: google-github-actions/setup-gcloud@v2
+    with:
+      project_id: $
+      service_account_key: $
+
+    - name: Upload files to the bucket
+    run: |
+      gsutil -m rsync -r . gs://$
+</code></pre>
+<p>To make it work, I need to create a <strong>service account</strong> in GCP and give it permissions to upload files to the bucket.
+I will use <strong>Terraform</strong> to create the service account and give it permissions.</p>
+<pre><code class="language-hcl"># terraform/main.tf
+resource &quot;google_service_account&quot; &quot;website_service_account&quot; {
+  account_id   = &quot;website-service-account&quot;
+  display_name = &quot;Website Service Account&quot;
+  project      = google_project.website_project.project_id
+}
+resource &quot;google_storage_bucket_iam_member&quot; &quot;website_bucket_iam_member&quot; {
+  bucket = google_storage_bucket.website_bucket.name
+  role   = &quot;roles/storage.objectAdmin&quot;
+  member = &quot;serviceAccount:${google_service_account.website_service_account.email}&quot;
+}
 </code></pre>
 
   </main>
