@@ -13,6 +13,12 @@ The official documentation on [How to host a static website on GCP](https://clou
 > I will omit the steps to create a GCP account and set up billing because they're boring.
 I'll focus on the high-level steps with some code snippets to illustrate the process.
 
+## Diagram
+
+The diagram below shows the components I use and their relationships.
+
+![Screenshot](/img/static-personal-website.svg)
+
 ## Google Cloud Platform (GCP)
 
 GCP has **a free tier** that allows you to host a static website for free.

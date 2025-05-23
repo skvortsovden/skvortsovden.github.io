@@ -1,0 +1,46 @@
+@startuml
+title Static Website Deployment on GCP via GitHub Actions
+
+actor "Website Visitor" as User
+
+' Developer-side
+node "Developer Machine" {
+  artifact "GitHub Repository" as GitHubRepo
+}
+
+' CI/CD pipeline
+node "GitHub" {
+  component "GitHub Actions Workflow" as GitHubActions
+}
+
+' GCP environment
+node "GCP Project" {
+  component "GCP Service Account" as GCPServiceAccount
+  component "GCP IAM Roles" as GCPIAM
+
+  node "GCP Storage" {
+    artifact "Static Website Bucket" as GCPBucket
+  }
+}
+
+' DNS and CDN
+node "Network Edge" {
+  component "Domain Registrar (nic.ua)" as Registrar
+  component "Cloudflare CDN" as Cloudflare
+}
+
+' Relationships
+GitHubRepo --> GitHubActions : Push triggers
+GitHubActions --> GCPServiceAccount : Authenticate via credentials
+GCPServiceAccount --> GCPIAM : Assigned IAM roles
+GitHubActions --> GCPBucket : Upload static site
+
+Registrar --> Cloudflare : DNS (CNAME, A records)
+Cloudflare --> GCPBucket : Reverse proxy / redirect
+
+GCPIAM --> GCPServiceAccount : Grants permissions
+
+GCPBucket --> User : Serves static content
+Cloudflare --> User : Delivers cached/optimized content
+
+@enduml
