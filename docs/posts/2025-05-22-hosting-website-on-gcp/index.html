@@ -35,54 +35,8 @@
 I'll focus on the high-level steps with some code snippets to illustrate the process.</p>
 </blockquote>
 <h2>Diagram</h2>
-<p>The diagram below shows what components I use and the relationship between them.</p>
-<pre><code class="language-plantuml">@startuml
-title Static Website Deployment on GCP via GitHub Actions
-
-actor &quot;Website Visitor&quot; as User
-
-' Developer-side
-node &quot;Developer Machine&quot; {
-  artifact &quot;GitHub Repository&quot; as GitHubRepo
-}
-
-' CI/CD pipeline
-node &quot;GitHub&quot; {
-  component &quot;GitHub Actions Workflow&quot; as GitHubActions
-}
-
-' GCP environment
-node &quot;GCP Project&quot; {
-  component &quot;GCP Service Account&quot; as GCPServiceAccount
-  component &quot;GCP IAM Roles&quot; as GCPIAM
-
-  node &quot;GCP Storage&quot; {
-    artifact &quot;Static Website Bucket&quot; as GCPBucket
-  }
-}
-
-' DNS and CDN
-node &quot;Network Edge&quot; {
-  component &quot;Domain Registrar (nic.ua)&quot; as Registrar
-  component &quot;Cloudflare CDN&quot; as Cloudflare
-}
-
-' Relationships
-GitHubRepo --&gt; GitHubActions : Push triggers
-GitHubActions --&gt; GCPServiceAccount : Authenticate via credentials
-GCPServiceAccount --&gt; GCPIAM : Assigned IAM roles
-GitHubActions --&gt; GCPBucket : Upload static site
-
-Registrar --&gt; Cloudflare : DNS (CNAME, A records)
-Cloudflare --&gt; GCPBucket : Reverse proxy / redirect
-
-GCPIAM --&gt; GCPServiceAccount : Grants permissions
-
-GCPBucket --&gt; User : Serves static content
-Cloudflare --&gt; User : Delivers cached/optimized content
-
-@enduml
-</code></pre>
+<p>The diagram below shows the components I use and their relationships.</p>
+<p><img src="/img/static-personal-website.svg" alt="Screenshot"></p>
 <h2>Google Cloud Platform (GCP)</h2>
 <p>GCP has <strong>a free tier</strong> that allows you to host a static website for free.
 See: <a href="https://cloud.google.com/free/docs/free-cloud-features#storage">https://cloud.google.com/free/docs/free-cloud-features#storage</a></p>
