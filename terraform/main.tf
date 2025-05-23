@@ -21,6 +21,7 @@ resource "google_storage_bucket" "website_bucket" {
   name     = var.bucket_name
   location = var.location
   force_destroy = true
+  storage_class = "STANDARD"            # Required for free tier
   website {
     main_page_suffix = "index.html"
     not_found_page   = "404.html"

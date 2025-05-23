@@ -21,7 +21,7 @@ variable "billing_account_id" {
 variable "location" {
     description = "The GCP location to deploy resources in"
     type        = string
-    default     = "US"
+    default     = "US-CENTRAL1"
 }
 
 variable "bucket_name" {
