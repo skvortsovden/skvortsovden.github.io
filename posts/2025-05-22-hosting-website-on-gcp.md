@@ -340,29 +340,49 @@ Next, I want to make it available by a short domain name.
 
 ## Connecting your domain to Cloud Storage
 
-For this exersice I don't want to pay any money so I found a way to register free domain name using Ukrainian hosting [nic.ua](https://nic.ua/).
+For this exercise, I didn't want to spend any money, so I found a way to register a free domain name using the **Ukrainian hosting provider** [nic.ua](https://nic.ua/).
 
-You can register `.pp.ua` domain name for free!
+You can register a `.pp.ua` domain name **for free!**
 
-Once it's done I have to point my domain the the bucket.
+Once that's done, I need to point my domain to the bucket.
 
 > To connect your domain to Cloud Storage, create a CNAME record through your domain registration service.
 
-source: [https://cloud.google.com/storage/docs/hosting-static-website-http#cname](https://cloud.google.com/storage/docs/hosting-static-website-http#cname)
+Source: [https://cloud.google.com/storage/docs/hosting-static-website-http#cname](https://cloud.google.com/storage/docs/hosting-static-website-http#cname)
 
-One more this to make it work with my DNS and GCP bucket - I have to name my bucket the same as my domain name.
+One more thing to make it work with my DNS and GCP bucket: I have to **name my bucket the same as my domain name**.
 
 > Create a bucket whose name matches the CNAME you created for your domain.
 
-source: [https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket](https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket)
+Source: [https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket](https://cloud.google.com/storage/docs/hosting-static-website-http#create-bucket)
 
-Eventually I have my website available at [http://www.skvortsovden.pp.ua](http://www.skvortsovden.pp.ua)
+Eventually, my website became available at [http://www.skvortsovden.pp.ua](http://www.skvortsovden.pp.ua)
 
+## Cloudflare
+
+Having my website accesible at `www` is ok, but I also want it to be accesible at root - `skvortsovden.pp.ua`.
+Also, I'd like to have SSL enabled.
+
+### What is Cloudflare?
+
+Cloudflare is a Content Delivery Network (**CDN**). It provides features to **route and distribute traffic** to your website, as well as secure connections via **TLS/SSL**.
+
+read more: [https://www.cloudflare.com/en-gb/learning/what-is-cloudflare/](https://www.cloudflare.com/en-gb/learning/what-is-cloudflare/)
+
+To make it work I just added two rules on Cloudflare:
+1. Redirect from root to www
+2. Redirect from HTTP to HTTPS
+
+![Screenshot](/img/scr04.png)
+
+Keep in mind that DNS propagation can take some time.  
+Whenever you update or add DNS records, allow some time for the changes to take effect globally.
 
 ## Things I learned
 
-- A project is the top-level abstraction in GCP
-- Each project has to be linked to a billing account
-- Terraform uses local state to track the state of resources on the cloud
-- Terraform automatically detects variables from the var.tf file next to main.tf
-- Service accounts and IAM roles work together to give access and set permissions for external services like GitHub Actions
+- A project is the top-level abstraction in GCP.
+- Each project must be linked to a billing account.
+- Terraform uses local state to track the status of resources in the cloud.
+- Terraform automatically detects variables from the `vars.tf` file located next to `main.tf`.
+- Service accounts and IAM roles work together to grant access and set permissions for external services like GitHub Actions.
+- DNS A records point to IP addresses, while CNAME records point to other DNS names.
