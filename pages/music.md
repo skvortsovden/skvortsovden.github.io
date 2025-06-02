@@ -10,6 +10,12 @@ I listen to music while I work, while I walk, while I run, while I drive, and wh
 Here are some of my favorite songs and albums.  
 I will update this list from time to time.
 
+## The Stone Roses - Fools Gold
+
+> I heard this song in one of the episodes of Black Mirror. It's from the late '90s. I like how the guitar sounds here.
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/2mv6GY70UsHiTCGQZ4JfgC?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
 ## The Lazy Jesus - Grunt
 
 > The Lazy Jesus is a Ukrainian sound producer, DJ and musician. 
