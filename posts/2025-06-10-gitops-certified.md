@@ -1,5 +1,6 @@
 ---
 title: "I'm now a **certified GitOps Associate"
+date: 2025-06-10
 categories: devops
 ---
 

@@ -1,0 +1,11 @@
+@startuml k8s-pod-expose
+
+rectangle "Internet" as internet
+folder "Kubernetes Cluster" {
+    rectangle "Service: LoadBalancer/NodePort" as svc
+    rectangle "Pod: nginx" as pod
+}
+
+internet --> svc : HTTP request
+svc --> pod : forwards request
+@enduml
