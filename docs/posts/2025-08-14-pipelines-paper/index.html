@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Turn your CI/CD pipelines into strategic insights with AI</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+        <li>
+          <a href="/film/">film</a>
+        </li>
+      
+        <li>
+          <a href="/events/">events</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>Turn your CI/CD pipelines into strategic insights with AI</h1>
+    <p><em>A data-driven look at how the open-source community actually implements CI/CD pipelines and why this research methodology could work for your company</em></p>
+<hr>
+<p>A recent study used Large Language Models (LLMs) to analyze CI/CD practices across thousands of popular GitHub repositories. The results show surprising insights that challenge what we think about modern software delivery.</p>
+<h2>How they conducted this research</h2>
+<p>The researchers used AI-driven methods to study CI/CD pipeline configurations on a large scale. They looked at 28,770 GitHub repositories with 1,000+ stars.</p>
+<p><strong>Two AI models</strong>: They used two different AI systems:</p>
+<ul>
+<li><strong>DeepSeek-V2</strong>: A specialized AI model good at understanding code</li>
+<li><strong>GPT-4o</strong>: An advanced AI model with strong reasoning skills</li>
+</ul>
+<p><strong>Automatic analysis</strong>: Instead of checking files manually, they built an AI system to automatically find and classify CI/CD practices from pipeline files across different platforms (GitHub Actions, Travis CI, Jenkins, GitLab CI, etc.).</p>
+<p><strong>Pattern recognition</strong>: The AI models were trained to identify 15+ different CI/CD practices including build automation (80.0%), testing (80.2%), security scanning (12.1%), containerization (17.9%), and cloud deployment (4.2%).</p>
+<p><strong>Results validation</strong>: Analysis showed that different platforms have different strengths. Travis CI was best for build automation (99.2%) while GitHub Actions was better for code checking (44.9%) and security testing (16.5%).</p>
+<p><strong>System instructions</strong>: The researchers created structured instructions <a href="(https://dl.acm.org/doi/10.1145/3696630.3728699)">(shown in Figure 1 of the paper)</a> to guide the AI in examining each pipeline configuration consistently.</p>
+<hr>
+<p>System prompt for examining the pipelines:</p>
+<pre><code>Your are a DevOps Engineer who summarize pipeline configuration files. 
+You will be given .gitlab-ci.yml file. Answer the following questions:
+
+1. Is there a stage/step where the application is buid? (yes/no)
+2. Is there a stage/step where the code is tested? (yes/no)
+3. Is there a stage/step where the application is deployed, published or released? (yes/no)
+4. Is there more than one deployment environment? (yes/no)
+5. Is there a stage/step with source code linting? (yes/no)
+...
+</code></pre>
+<p>See <a href="https://dl.acm.org/doi/10.1145/3696630.3728699">the original paper</a> for the full list of questions.</p>
+<hr>
+<h2>The big picture: CI/CD adoption reality</h2>
+<p>The first important finding: <strong>only 64.5% of popular repositories use CI/CD systems</strong>. This might seem low for 2025, but it makes sense. Many open-source projects are different types - not everything needs a complex pipeline.</p>
+<p>Among projects that do use CI/CD, there is a clear difference between basic automation and advanced practices.</p>
+<h2>The fundamentals are universal</h2>
+<p>The study confirms what most of us see every day: <strong>build and test stages are used by 80% of projects</strong>. These have become the standard foundation of modern software development, especially when teams work together and need automated quality checks.</p>
+<p><strong>Code checking (linting) is used by 36.2%</strong>. This is lower than expected, but many projects probably include code quality checks in their testing instead of treating them as separate steps.</p>
+<h2>The deployment gap</h2>
+<p>Deployment stages appear in only 41.1% of repositories. This big drop makes sense when you think about it. Many popular repositories are libraries, frameworks, or developer tools meant for integration rather than direct deployment.</p>
+<p>Even more interesting: <strong>only 9.7% use multiple deployment environments</strong>. This shows that the development → staging → production workflow is actually only used by more mature applications with complex release needs.</p>
+<h2>Advanced practices remain niche</h2>
+<p>The study shows that advanced deployment strategies are not widely used:</p>
+<ul>
+<li><strong>Containerization (Docker)</strong>: 17.9%</li>
+<li><strong>Kubernetes deployment</strong>: 1.5%</li>
+<li><strong>Security scanning (SAST)</strong>: Limited use</li>
+</ul>
+<p>These numbers show practical reality. While these technologies are powerful, they add complexity that many projects simply don't need.</p>
+<h2>What this means for DevOps practitioners</h2>
+<h3>1. Right-size your complexity</h3>
+<p>Not every project needs the full spectrum of CI/CD capabilities. The data suggests successful open-source projects focus on getting the basics right: reliable builds and comprehensive testing.</p>
+<h3>2. Deployment strategy should match purpose</h3>
+<p>The low deployment adoption reinforces that your CI/CD strategy should align with your project's purpose. Libraries and tools have different needs than web applications or services.</p>
+<h3>3. Advanced features when they add value</h3>
+<p>The minimal Kubernetes adoption (1.5%) suggests that complex orchestration should be adopted based on genuine need, not industry trends.</p>
+<h2>Applying this approach in your organization</h2>
+<p>This research methodology presents a practical opportunity for larger organizations with extensive CI/CD infrastructure. If your company manages dozens of pipelines across multiple teams and departments, you can adopt a similar LLM-based analysis approach to generate data-backed evidence for stakeholder decisions.</p>
+<p>For example, if you need to demonstrate the necessity of security scan adoption across your organization, you could analyze your internal pipeline configurations to show current security practice gaps. This type of internal research can provide concrete metrics to support infrastructure investments, standardization efforts, or policy changes.</p>
+<p>Organizations with sufficient pipeline data can leverage this approach to:</p>
+<ul>
+<li>Identify inconsistencies in CI/CD practices across teams</li>
+<li>Demonstrate ROI for proposed tooling or process improvements</li>
+<li>Support compliance or security initiatives with usage data</li>
+<li>Guide standardization efforts based on actual adoption patterns</li>
+</ul>
+<h2>The LLM research advantage</h2>
+<p>This study demonstrates how LLMs can analyze vast codebases to extract meaningful patterns. This would be impractical through manual analysis. This capability could be valuable for future research into optimal CI/CD practices and automated pipeline optimization.</p>
+<h2>Takeaways for your pipeline</h2>
+<p>Before adding that next CI/CD stage, ask yourself:</p>
+<ul>
+<li>Does this solve a real problem for my project?</li>
+<li>Am I following patterns that make sense for my project type?</li>
+<li>Are my basics (build, test) solid before adding complexity?</li>
+</ul>
+<p>The data suggests that successful projects master the fundamentals before embracing advanced features. Sometimes the best CI/CD pipeline is the simplest one that meets your actual needs.</p>
+<hr>
+<p><em>Want to dive deeper? The <a href="https://dl.acm.org/doi/10.1145/3696630.3728699">full research paper</a> provides detailed breakdowns by CI/CD system and additional insights into modern software delivery practices.</em></p>
+<p><strong>Tags</strong>: #DevOps #CICD #SoftwareEngineering #GitHubAnalysis #DataDriven</p>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>
