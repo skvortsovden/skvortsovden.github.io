@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How we automated code review</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">posts</a></li>
+      
+        <li>
+          <a href="/about/">about</a>
+        </li>
+      
+        <li>
+          <a href="/music/">music</a>
+        </li>
+      
+        <li>
+          <a href="/film/">film</a>
+        </li>
+      
+        <li>
+          <a href="/events/">events</a>
+        </li>
+      
+    </ul>
+  </nav>
+  <main>
+    <h1>How we automated code review</h1>
+    <ul>
+<li>TDD</li>
+<li>git subcommands</li>
+<li>using local code syntax check</li>
+</ul>
+<p>the code was written in C++
+we used latex open source tool,</p>
+<p>we had a team of senior C developers, who didn't work with git at all,
+we were migrating from subversion to gitlab,
+and we just held a complete course for them on &quot;how to use git tools&quot;,
+then we decided to make it easier for them and provide them with local tooling,
+so that they can install it locally and check before push changes upstream,</p>
+<p>git check-all
+git fix-all</p>
+<p>there was a silos between Devs and Ops
+and we broke that wall by levereging modern toolkit.</p>
+<p>we added the same check to the CI, so that everytime they push changes, we catch all typos and mismatch in the code and provide them with an instant feedback;</p>
+<p>that increased delivery time at least twice;</p>
+<p>we also did use standart issue templates for all teams for the PRs;
+everytime there is a new PR, we provide Devs with checklist;
+we also added scripts to automate these check;</p>
+
+  </main>
+  <footer class="site-footer">
+    <a href="mailto:denys.v.skvortsov@gmail.com" aria-label="Email">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/denys-skvortsov/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/skvortsovden" target="_blank" rel="noopener" aria-label="GitHub">
+      <i class="fa-brands fa-github"></i>
+    </a>
+  </footer>
+</body>
+</html>
